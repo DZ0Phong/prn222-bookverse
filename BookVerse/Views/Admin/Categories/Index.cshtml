@@ -1,0 +1,291 @@
+@model BookVerse.Models.ViewModels.Admin.CategoryListViewModel
+@{
+    Layout = "_AdminLayout";
+    ViewData["Title"] = "Quản lý danh mục";
+    ViewData["ActiveMenu"] = "Categories";
+}
+
+<!-- Page Header -->
+<div class="page-header">
+    <div class="page-header-left">
+        <h1><i class="bi bi-grid me-2 text-accent"></i>Quản lý danh mục</h1>
+        <p>Tổng cộng <strong class="text-accent">@Model.Categories.Count</strong> danh mục</p>
+    </div>
+    <button type="button" class="btn btn-primary" onclick="openAddModal()">
+        <i class="bi bi-plus-lg"></i> Thêm danh mục
+    </button>
+</div>
+
+<!-- Alert Container (dynamic) -->
+<div id="alertContainer"></div>
+
+<!-- Main Card -->
+<div class="admin-card">
+    <div class="admin-table-wrapper">
+        <table class="admin-table" id="categoriesTable">
+            <thead>
+                <tr>
+                    <th>#</th>
+                    <th>Tên danh mục</th>
+                    <th>Mô tả</th>
+                    <th>Số sách</th>
+                    <th style="width:120px">Thao tác</th>
+                </tr>
+            </thead>
+            <tbody id="categoriesBody">
+                @if (!Model.Categories.Any())
+                {
+                    <tr id="emptyRow">
+                        <td colspan="5" class="text-center py-5">
+                            <i class="bi bi-grid" style="font-size:2rem;color:var(--color-text-muted);display:block;margin-bottom:0.75rem"></i>
+                            <span class="text-muted">Chưa có danh mục nào. Hãy thêm mới!</span>
+                        </td>
+                    </tr>
+                }
+                @{int idx = 1;}
+                @foreach (var cat in Model.Categories)
+                {
+                    <tr id="row-@cat.CategoryId">
+                        <td class="text-muted">@(idx++)</td>
+                        <td>
+                            <span class="fw-600" style="color:var(--color-text-primary)" id="name-@cat.CategoryId">@cat.CategoryName</span>
+                        </td>
+                        <td>
+                            <span id="desc-@cat.CategoryId">
+                                @(string.IsNullOrEmpty(cat.Description) ? "—" : cat.Description)
+                            </span>
+                        </td>
+                        <td>
+                            <span id="count-@cat.CategoryId" class="badge @(cat.BookCount > 0 ? "badge-info" : "badge-secondary")">
+                                @cat.BookCount sách
+                            </span>
+                        </td>
+                        <td>
+                            <div class="table-actions">
+                                <button type="button"
+                                        class="btn-action btn-action-edit"
+                                        title="Chỉnh sửa"
+                                        onclick="openEditModal(@cat.CategoryId)">
+                                    <i class="bi bi-pencil"></i>
+                                </button>
+                                <button type="button"
+                                        class="btn-action btn-action-delete"
+                                        title="@(cat.BookCount > 0 ? "Không thể xóa — còn sách" : "Xóa danh mục")"
+                                        onclick="confirmDelete(@cat.CategoryId, '@cat.CategoryName?.Replace("'", "\\'")', @cat.BookCount)"
+                                        @(cat.BookCount > 0 ? "style='opacity:0.5;cursor:not-allowed'" : "")>
+                                    <i class="bi bi-trash"></i>
+                                </button>
+                            </div>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<!-- Add/Edit Modal -->
+<div class="modal fade admin-modal" id="categoryModal" tabindex="-1">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="modalTitle">
+                    <i class="bi bi-grid me-2 text-accent"></i>Thêm danh mục
+                </h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <div id="modalAlert" class="mb-3" style="display:none"></div>
+
+                <div class="mb-3">
+                    <label class="form-label">Tên danh mục <span class="text-accent">*</span></label>
+                    <input type="text" id="catName" class="form-control" placeholder="Ví dụ: Văn học, Khoa học..." maxlength="100" />
+                    <div id="catNameError" class="text-danger small mt-1" style="display:none"></div>
+                </div>
+
+                <div class="mb-2">
+                    <label class="form-label">Mô tả</label>
+                    <textarea id="catDesc" class="form-control" rows="3" placeholder="Mô tả ngắn về danh mục..." maxlength="255"></textarea>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary btn-sm" data-bs-dismiss="modal">Hủy</button>
+                <button type="button" class="btn btn-primary btn-sm" id="saveBtn" onclick="saveCategory()">
+                    <i class="bi bi-check-lg me-1"></i><span id="saveBtnText">Lưu</span>
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Delete Confirm Modal -->
+<div class="modal fade admin-modal" id="deleteModal" tabindex="-1">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title"><i class="bi bi-trash me-2 text-accent"></i>Xác nhận xóa</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <p id="deleteMessage"></p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary btn-sm" data-bs-dismiss="modal">Hủy</button>
+                <button type="button" class="btn btn-primary btn-sm" id="confirmDeleteBtn">
+                    <i class="bi bi-trash me-1"></i>Xóa
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+<script>
+    let currentCatId = 0;
+    let catModal, deleteModal;
+
+    document.addEventListener('DOMContentLoaded', () => {
+        catModal = new bootstrap.Modal(document.getElementById('categoryModal'));
+        deleteModal = new bootstrap.Modal(document.getElementById('deleteModal'));
+    });
+
+    function showAlert(message, type = 'success') {
+        const el = document.getElementById('alertContainer');
+        const icon = type === 'success' ? 'check-circle-fill' : (type === 'warning' ? 'exclamation-triangle-fill' : 'x-circle-fill');
+        el.innerHTML = `<div class="alert alert-${type} mb-4 fade-in"><i class="bi bi-${icon}"></i><span>${message}</span></div>`;
+        setTimeout(() => { el.innerHTML = ''; }, 4000);
+    }
+
+    function openAddModal() {
+        currentCatId = 0;
+        document.getElementById('modalTitle').innerHTML = '<i class="bi bi-grid me-2 text-accent"></i>Thêm danh mục';
+        document.getElementById('catName').value = '';
+        document.getElementById('catDesc').value = '';
+        document.getElementById('saveBtnText').textContent = 'Thêm';
+        document.getElementById('modalAlert').style.display = 'none';
+        document.getElementById('catNameError').style.display = 'none';
+        catModal.show();
+    }
+
+    async function openEditModal(catId) {
+        currentCatId = catId;
+        document.getElementById('modalTitle').innerHTML = '<i class="bi bi-pencil me-2 text-accent"></i>Chỉnh sửa danh mục';
+        document.getElementById('saveBtnText').textContent = 'Lưu thay đổi';
+        document.getElementById('modalAlert').style.display = 'none';
+        document.getElementById('catNameError').style.display = 'none';
+
+        const resp = await fetch(`/Admin/Categories/GetById/${catId}`);
+        const json = await resp.json();
+        if (json.success) {
+            document.getElementById('catName').value = json.data.categoryName;
+            document.getElementById('catDesc').value = json.data.description ?? '';
+        }
+        catModal.show();
+    }
+
+    async function saveCategory() {
+        const name = document.getElementById('catName').value.trim();
+        const desc = document.getElementById('catDesc').value.trim();
+        const nameError = document.getElementById('catNameError');
+
+        if (!name) {
+            nameError.textContent = 'Tên danh mục không được để trống';
+            nameError.style.display = 'block';
+            return;
+        }
+        nameError.style.display = 'none';
+
+        const btn = document.getElementById('saveBtn');
+        btn.disabled = true;
+        btn.innerHTML = '<span class="spinner-border spinner-border-sm me-1"></span>Đang lưu...';
+
+        const url = currentCatId === 0 ? '/Admin/Categories/Create' : '/Admin/Categories/Edit';
+        const body = { categoryId: currentCatId, categoryName: name, description: desc };
+
+        try {
+            const resp = await fetch(url, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(body)
+            });
+            const json = await resp.json();
+
+            if (json.success) {
+                catModal.hide();
+                showAlert(json.message);
+                updateTable(json.data, currentCatId === 0 ? 'add' : 'edit');
+            } else {
+                const alertEl = document.getElementById('modalAlert');
+                alertEl.innerHTML = `<div class="alert alert-danger"><i class="bi bi-x-circle-fill me-2"></i>${json.message}</div>`;
+                alertEl.style.display = 'block';
+            }
+        } finally {
+            btn.disabled = false;
+            btn.innerHTML = '<i class="bi bi-check-lg me-1"></i><span id="saveBtnText">Lưu</span>';
+        }
+    }
+
+    function updateTable(data, action) {
+        const tbody = document.getElementById('categoriesBody');
+        const emptyRow = document.getElementById('emptyRow');
+        if (emptyRow) emptyRow.remove();
+
+        if (action === 'add') {
+            const rowCount = tbody.querySelectorAll('tr').length + 1;
+            const tr = document.createElement('tr');
+            tr.id = `row-${data.categoryId}`;
+            tr.className = 'fade-in';
+            tr.innerHTML = `
+                <td class="text-muted">${rowCount}</td>
+                <td><span class="fw-600" style="color:var(--color-text-primary)" id="name-${data.categoryId}">${data.categoryName}</span></td>
+                <td><span id="desc-${data.categoryId}">${data.description || '—'}</span></td>
+                <td><span id="count-${data.categoryId}" class="badge badge-secondary">0 sách</span></td>
+                <td>
+                    <div class="table-actions">
+                        <button class="btn-action btn-action-edit" onclick="openEditModal(${data.categoryId})"><i class="bi bi-pencil"></i></button>
+                        <button class="btn-action btn-action-delete" onclick="confirmDelete(${data.categoryId}, '${data.categoryName.replace(/'/g, "\\'")}', 0)"><i class="bi bi-trash"></i></button>
+                    </div>
+                </td>`;
+            tbody.appendChild(tr);
+        } else {
+            const nameEl = document.getElementById(`name-${data.categoryId}`);
+            const descEl = document.getElementById(`desc-${data.categoryId}`);
+            if (nameEl) nameEl.textContent = data.categoryName;
+            if (descEl) descEl.textContent = data.description || '—';
+        }
+    }
+
+    function confirmDelete(catId, name, bookCount) {
+        if (bookCount > 0) {
+            showAlert(`Không thể xóa danh mục "${name}" vì còn ${bookCount} sách thuộc danh mục này!`, 'danger');
+            return;
+        }
+
+        const msg = document.getElementById('deleteMessage');
+        msg.innerHTML = `Bạn có chắc muốn xóa danh mục <strong>"${name}"</strong>?<br><span class="text-muted" style="font-size:0.875rem">Thao tác này không thể hoàn tác.</span>`;
+
+        const confirmBtn = document.getElementById('confirmDeleteBtn');
+        confirmBtn.onclick = async () => {
+            confirmBtn.disabled = true;
+            confirmBtn.innerHTML = '<span class="spinner-border spinner-border-sm me-1"></span>Đang xóa...';
+
+            const resp = await fetch(`/Admin/Categories/Delete?id=${catId}`, { method: 'POST' });
+            const json = await resp.json();
+            deleteModal.hide();
+
+            if (json.success) {
+                const row = document.getElementById(`row-${catId}`);
+                if (row) row.remove();
+                showAlert(json.message);
+            } else {
+                showAlert(json.message, 'danger');
+            }
+
+            confirmBtn.disabled = false;
+            confirmBtn.innerHTML = '<i class="bi bi-trash me-1"></i>Xóa';
+        };
+
+        deleteModal.show();
+    }
+</script>
+}

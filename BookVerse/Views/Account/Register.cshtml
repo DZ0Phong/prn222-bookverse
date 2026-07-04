@@ -1,0 +1,188 @@
+@model BookVerse.Models.ViewModels.RegisterViewModel
+@{
+    Layout = null;
+}
+<!DOCTYPE html>
+<html class="light" lang="vi">
+<head>
+    <meta charset="utf-8" />
+    <meta content="width=device-width, initial-scale=1.0" name="viewport" />
+    <title>Đăng ký - Tiệm Sách Trí Tuệ</title>
+    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@100..900&family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet" />
+    <style>
+        .material-symbols-outlined { font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24; display: inline-block; line-height: 1; text-transform: none; letter-spacing: normal; word-wrap: normal; white-space: nowrap; direction: ltr; }
+        body { font-family: 'Inter', sans-serif; background-color: #faf8ff; }
+        .glass-card { background: rgba(255,255,255,0.8); backdrop-filter: blur(12px); border: 1px solid rgba(255,255,255,0.3); }
+    </style>
+    <script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "surface-container": "#eaedff", "background": "#faf8ff", "surface-variant": "#dae2fd",
+                        "surface-container-lowest": "#ffffff", "primary-container": "#2c3e90", "on-surface": "#131b2e",
+                        "primary": "#102579", "surface-bright": "#faf8ff", "on-background": "#131b2e",
+                        "secondary-container": "#acedd3", "on-primary": "#ffffff", "outline-variant": "#c5c5d3",
+                        "on-surface-variant": "#454651", "outline": "#757683", "secondary": "#286955", "error": "#ba1a1a"
+                    },
+                    "borderRadius": { "DEFAULT": "0.25rem", "lg": "0.5rem", "xl": "0.75rem", "full": "9999px" },
+                    "spacing": { "margin-mobile": "1rem", "stack-md": "1rem", "stack-sm": "0.5rem", "gutter": "1.5rem", "stack-lg": "2rem", "container-max": "1280px" },
+                    "fontFamily": { "headline-lg": ["Inter"], "body-lg": ["Inter"], "body-md": ["Inter"], "headline-md": ["Inter"], "headline-sm": ["Inter"], "label-md": ["Inter"] },
+                    "fontSize": {
+                        "headline-lg": ["32px", {"lineHeight": "40px", "letterSpacing": "-0.02em", "fontWeight": "700"}],
+                        "body-lg": ["16px", {"lineHeight": "24px", "fontWeight": "400"}],
+                        "body-md": ["14px", {"lineHeight": "20px", "fontWeight": "400"}],
+                        "headline-md": ["20px", {"lineHeight": "28px", "fontWeight": "600"}],
+                        "headline-sm": ["16px", {"lineHeight": "24px", "fontWeight": "600"}],
+                        "label-md": ["12px", {"lineHeight": "16px", "letterSpacing": "0.05em", "fontWeight": "500"}]
+                    }
+                }
+            }
+        }
+    </script>
+</head>
+<body class="min-h-screen flex flex-col relative overflow-x-hidden">
+    <!-- Background -->
+    <div class="fixed inset-0 -z-10 overflow-hidden">
+        <div class="absolute top-[-10%] left-[-10%] w-[40%] h-[40%] rounded-full bg-blue-100 opacity-50 blur-[120px]"></div>
+        <div class="absolute bottom-[-5%] right-[-5%] w-[30%] h-[30%] rounded-full bg-green-100 opacity-50 blur-[100px]"></div>
+    </div>
+
+    <main class="flex-grow flex items-center justify-center px-4 py-12">
+        <div class="w-full max-w-[480px] z-10">
+            <!-- Logo -->
+            <div class="text-center mb-8">
+                <div class="inline-flex items-center justify-center w-16 h-16 rounded-2xl bg-primary mb-4 shadow-lg">
+                    <span class="material-symbols-outlined text-white text-[32px]">menu_book</span>
+                </div>
+                <h2 class="font-headline-lg text-headline-lg text-primary">Tiệm Sách Trí Tuệ</h2>
+                <p class="font-body-md text-body-md text-on-surface-variant mt-2">Nuôi dưỡng tri thức thông qua từng trang sách.</p>
+            </div>
+
+            <!-- Card -->
+            <div class="glass-card p-8 rounded-xl shadow-xl border border-outline-variant">
+                <h1 class="font-headline-md text-headline-md text-on-surface text-center mb-6">Tạo tài khoản mới</h1>
+
+                <!-- Error Message -->
+                @if (!string.IsNullOrEmpty(Model?.ErrorMessage))
+                {
+                    <div class="mb-4 p-4 bg-red-50 border border-red-200 rounded-lg flex items-center gap-2">
+                        <span class="material-symbols-outlined text-error text-[20px]">error</span>
+                        <p class="font-body-md text-body-md text-error">@Model.ErrorMessage</p>
+                    </div>
+                }
+
+                <form asp-controller="Account" asp-action="Register" method="post" class="space-y-5" id="registerForm">
+                    @Html.AntiForgeryToken()
+
+                    <!-- Họ tên -->
+                    <div class="space-y-1.5">
+                        <label class="font-label-md text-label-md text-on-surface-variant block uppercase tracking-wider" for="FullName">Họ tên</label>
+                        <div class="relative group">
+                            <span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-outline group-focus-within:text-primary transition-colors">person</span>
+                            <input asp-for="FullName" class="w-full pl-10 pr-4 py-3 bg-white border border-outline-variant rounded-lg focus:ring-2 focus:ring-primary focus:border-primary outline-none transition-all font-body-md text-body-md" placeholder="Nguyễn Văn A" />
+                        </div>
+                        <span asp-validation-for="FullName" class="text-error text-xs"></span>
+                    </div>
+
+                    <!-- Email & SĐT -->
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div class="space-y-1.5">
+                            <label class="font-label-md text-label-md text-on-surface-variant block uppercase tracking-wider" for="Email">Email</label>
+                            <div class="relative group">
+                                <span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-outline group-focus-within:text-primary transition-colors">mail</span>
+                                <input asp-for="Email" type="email" class="w-full pl-10 pr-4 py-3 bg-white border border-outline-variant rounded-lg focus:ring-2 focus:ring-primary focus:border-primary outline-none transition-all font-body-md text-body-md" placeholder="example@gmail.com" autocomplete="email" />
+                            </div>
+                            <span asp-validation-for="Email" class="text-error text-xs"></span>
+                        </div>
+                        <div class="space-y-1.5">
+                            <label class="font-label-md text-label-md text-on-surface-variant block uppercase tracking-wider" for="Phone">SĐT</label>
+                            <div class="relative group">
+                                <span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-outline group-focus-within:text-primary transition-colors">call</span>
+                                <input asp-for="Phone" type="tel" class="w-full pl-10 pr-4 py-3 bg-white border border-outline-variant rounded-lg focus:ring-2 focus:ring-primary focus:border-primary outline-none transition-all font-body-md text-body-md" placeholder="0901234567" />
+                            </div>
+                            <span asp-validation-for="Phone" class="text-error text-xs"></span>
+                        </div>
+                    </div>
+
+                    <!-- Password -->
+                    <div class="space-y-1.5">
+                        <label class="font-label-md text-label-md text-on-surface-variant block uppercase tracking-wider" for="Password">Mật khẩu</label>
+                        <div class="relative group">
+                            <span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-outline group-focus-within:text-primary transition-colors">lock</span>
+                            <input asp-for="Password" id="Password" type="password" class="w-full pl-10 pr-12 py-3 bg-white border border-outline-variant rounded-lg focus:ring-2 focus:ring-primary focus:border-primary outline-none transition-all font-body-md text-body-md" placeholder="•••••••• (tối thiểu 6 ký tự)" autocomplete="new-password" />
+                            <button class="absolute right-3 top-1/2 -translate-y-1/2 text-outline hover:text-primary transition-colors" id="togglePwd1" type="button">
+                                <span class="material-symbols-outlined">visibility</span>
+                            </button>
+                        </div>
+                        <span asp-validation-for="Password" class="text-error text-xs"></span>
+                    </div>
+
+                    <!-- Confirm Password -->
+                    <div class="space-y-1.5">
+                        <label class="font-label-md text-label-md text-on-surface-variant block uppercase tracking-wider" for="ConfirmPassword">Xác nhận mật khẩu</label>
+                        <div class="relative group">
+                            <span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-outline group-focus-within:text-primary transition-colors">lock_reset</span>
+                            <input asp-for="ConfirmPassword" id="ConfirmPassword" type="password" class="w-full pl-10 pr-4 py-3 bg-white border border-outline-variant rounded-lg focus:ring-2 focus:ring-primary focus:border-primary outline-none transition-all font-body-md text-body-md" placeholder="••••••••" autocomplete="new-password" />
+                        </div>
+                        <span asp-validation-for="ConfirmPassword" class="text-error text-xs"></span>
+                    </div>
+
+                    <!-- Register Button -->
+                    <button id="registerBtn" class="w-full py-4 bg-primary text-white font-headline-sm text-headline-sm rounded-lg shadow-lg hover:bg-primary-container hover:shadow-xl transition-all duration-200 active:scale-[0.98] mt-6" type="submit">
+                        Đăng ký
+                    </button>
+
+                    <!-- Divider & Login link -->
+                    <div class="flex items-center my-4">
+                        <div class="flex-grow border-t border-outline-variant"></div>
+                        <span class="px-4 font-label-md text-label-md text-outline">HOẶC</span>
+                        <div class="flex-grow border-t border-outline-variant"></div>
+                    </div>
+                    <p class="text-center font-body-md text-body-md text-on-surface-variant">
+                        Bạn đã có tài khoản?
+                        <a class="text-primary font-bold hover:underline ml-1" href="/Account/Login">Đăng nhập</a>
+                    </p>
+                </form>
+            </div>
+        </div>
+    </main>
+
+    <footer class="w-full py-6 text-center text-on-surface-variant font-body-md text-body-md">
+        <p>© 2024 Tiệm Sách Trí Tuệ. All rights reserved.</p>
+    </footer>
+
+    <script>
+        // Password toggle
+        document.getElementById('togglePwd1').addEventListener('click', function() {
+            const input = document.getElementById('Password');
+            const icon = this.querySelector('span');
+            input.type = input.type === 'password' ? 'text' : 'password';
+            icon.textContent = input.type === 'password' ? 'visibility' : 'visibility_off';
+        });
+
+        // Card reveal animation
+        document.addEventListener('DOMContentLoaded', () => {
+            const card = document.querySelector('.glass-card');
+            if (card) {
+                card.style.opacity = '0';
+                card.style.transform = 'translateY(20px)';
+                setTimeout(() => {
+                    card.style.transition = 'all 0.6s cubic-bezier(0.16, 1, 0.3, 1)';
+                    card.style.opacity = '1';
+                    card.style.transform = 'translateY(0)';
+                }, 100);
+            }
+        });
+
+        // Loading state
+        document.getElementById('registerForm').addEventListener('submit', function() {
+            const btn = document.getElementById('registerBtn');
+            btn.disabled = true;
+            btn.innerHTML = '<span class="material-symbols-outlined animate-spin">progress_activity</span>';
+        });
+    </script>
+</body>
+</html>

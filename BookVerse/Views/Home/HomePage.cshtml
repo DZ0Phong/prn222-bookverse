@@ -1,0 +1,488 @@
+@{
+    Layout = null;
+}
+<!DOCTYPE html>
+
+<html class="light" lang="vi">
+<head>
+    <meta charset="utf-8" />
+    <meta content="width=device-width, initial-scale=1.0" name="viewport" />
+    <title>Tiệm Sách Trí Tuệ | Trang chủ</title>
+    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;display=swap" rel="stylesheet" />
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet" />
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet" />
+    <style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        .filled-icon {
+            font-variation-settings: 'FILL' 1;
+        }
+        .book-card-hover:hover .add-to-cart-btn {
+            opacity: 1;
+            transform: translateY(0);
+        }
+        .glass-effect {
+            background: rgba(255, 255, 255, 0.8);
+            backdrop-filter: blur(8px);
+        }
+    </style>
+    <script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "surface-container": "#eaedff",
+                        "background": "#faf8ff",
+                        "tertiary-fixed-dim": "#ffb95f",
+                        "on-secondary-fixed": "#002117",
+                        "surface-variant": "#dae2fd",
+                        "surface-container-lowest": "#ffffff",
+                        "primary-container": "#2c3e90",
+                        "surface-dim": "#d2d9f4",
+                        "on-secondary-fixed-variant": "#06513e",
+                        "on-tertiary-fixed-variant": "#653e00",
+                        "on-surface": "#131b2e",
+                        "tertiary": "#452900",
+                        "primary": "#102579",
+                        "surface-bright": "#faf8ff",
+                        "on-background": "#131b2e",
+                        "surface-container-high": "#e2e7ff",
+                        "on-tertiary-fixed": "#2a1700",
+                        "secondary-fixed": "#aef0d6",
+                        "surface-container-highest": "#dae2fd",
+                        "tertiary-container": "#633d00",
+                        "tertiary-fixed": "#ffddb8",
+                        "primary-fixed": "#dee1ff",
+                        "on-secondary": "#ffffff",
+                        "surface-container-low": "#f2f3ff",
+                        "on-primary-container": "#9faeff",
+                        "secondary-container": "#acedd3",
+                        "on-primary": "#ffffff",
+                        "outline-variant": "#c5c5d3",
+                        "inverse-primary": "#b9c3ff",
+                        "on-tertiary": "#ffffff",
+                        "on-secondary-container": "#2d6e59",
+                        "on-error": "#ffffff",
+                        "on-tertiary-container": "#f8a00f",
+                        "on-error-container": "#93000a",
+                        "on-surface-variant": "#454651",
+                        "inverse-surface": "#283044",
+                        "error-container": "#ffdad6",
+                        "on-primary-fixed-variant": "#2e3f91",
+                        "outline": "#757683",
+                        "on-primary-fixed": "#001258",
+                        "secondary-fixed-dim": "#93d4ba",
+                        "error": "#ba1a1a",
+                        "surface": "#faf8ff",
+                        "primary-fixed-dim": "#b9c3ff",
+                        "surface-tint": "#4758ab",
+                        "inverse-on-surface": "#eef0ff",
+                        "secondary": "#286955"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                    "spacing": {
+                        "margin-mobile": "1rem",
+                        "stack-md": "1rem",
+                        "stack-sm": "0.5rem",
+                        "gutter": "1.5rem",
+                        "stack-lg": "2rem",
+                        "container-max": "1280px"
+                    },
+                    "fontFamily": {
+                        "headline-lg": ["Inter"],
+                        "body-lg": ["Inter"],
+                        "body-md": ["Inter"],
+                        "headline-md": ["Inter"],
+                        "headline-sm": ["Inter"],
+                        "label-md": ["Inter"]
+                    },
+                    "fontSize": {
+                        "headline-lg": ["32px", {"lineHeight": "40px", "letterSpacing": "-0.02em", "fontWeight": "700"}],
+                        "body-lg": ["16px", {"lineHeight": "24px", "fontWeight": "400"}],
+                        "body-md": ["14px", {"lineHeight": "20px", "fontWeight": "400"}],
+                        "headline-md": ["20px", {"lineHeight": "28px", "fontWeight": "600"}],
+                        "headline-sm": ["16px", {"lineHeight": "24px", "fontWeight": "600"}],
+                        "label-md": ["12px", {"lineHeight": "16px", "letterSpacing": "0.05em", "fontWeight": "500"}]
+                    }
+                }
+            }
+        }
+    </script>
+</head>
+<body class="bg-background text-on-surface font-body-md overflow-x-hidden">
+    <!-- TopNavBar -->
+    <header class="bg-surface sticky top-0 z-50 border-b border-outline-variant shadow-sm">
+        <div class="flex justify-between items-center px-gutter py-4 w-full max-w-container-max mx-auto">
+            <div class="flex items-center gap-8 flex-1">
+                <a class="font-headline-md text-headline-md font-bold text-primary" href="#">Tiệm Sách Trí Tuệ</a>
+                <div class="hidden md:flex flex-1 max-w-md relative">
+                    <input class="w-full pl-10 pr-4 py-2 bg-surface-container-low border border-outline-variant rounded-full text-body-md focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent transition-all" placeholder="Tìm kiếm theo tên sách, tác giả..." type="text" />
+                    <span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-outline">search</span>
+                </div>
+            </div>
+            <nav class="hidden lg:flex items-center gap-6 px-8">
+                <a class="text-primary font-bold border-b-2 border-primary pb-1 font-body-md transition-colors" href="#">Trang chủ</a>
+                <a class="text-on-surface-variant hover:text-primary transition-colors font-body-md" href="#">Sách mới</a>
+                <a class="text-on-surface-variant hover:text-primary transition-colors font-body-md" href="#">Khuyến mãi</a>
+                <a class="text-on-surface-variant hover:text-primary transition-colors font-body-md" href="#">Bán chạy</a>
+            </nav>
+            <div class="flex items-center gap-4">
+                <button class="p-2 text-on-surface-variant hover:text-primary transition-colors relative">
+                    <span class="material-symbols-outlined" data-icon="favorite">favorite</span>
+                </button>
+                <button class="p-2 text-on-surface-variant hover:text-primary transition-colors relative">
+                    <span class="material-symbols-outlined" data-icon="shopping_cart">shopping_cart</span>
+                    <span class="absolute top-0 right-0 bg-error text-white text-[10px] w-4 h-4 flex items-center justify-center rounded-full">3</span>
+                </button>
+
+                @if (User.Identity?.IsAuthenticated == true)
+                {
+                    <!-- User Dropdown -->
+                    <div class="relative" id="userDropdown">
+                        <button onclick="document.getElementById('userMenu').classList.toggle('hidden')"
+                                class="flex items-center gap-2 px-3 py-2 rounded-lg hover:bg-surface-container transition-colors text-on-surface">
+                            <span class="material-symbols-outlined text-primary">account_circle</span>
+                            <span class="hidden md:block font-body-md text-body-md font-semibold text-primary max-w-[120px] truncate">@User.Identity.Name</span>
+                            <span class="material-symbols-outlined text-[18px] text-outline">expand_more</span>
+                        </button>
+                        <div id="userMenu" class="hidden absolute right-0 top-full mt-2 w-52 bg-white border border-outline-variant rounded-xl shadow-lg z-50 overflow-hidden">
+                            @if (User.IsInRole("Admin"))
+                            {
+                                <a href="/Admin/Dashboard" class="flex items-center gap-2 px-4 py-3 text-on-surface hover:bg-surface-container transition-colors font-body-md text-body-md">
+                                    <span class="material-symbols-outlined text-[18px] text-primary">admin_panel_settings</span>
+                                    Trang quản trị
+                                </a>
+                                <div class="border-t border-outline-variant"></div>
+                            }
+                            <a href="/Account/Profile" class="flex items-center gap-2 px-4 py-3 text-on-surface hover:bg-surface-container transition-colors font-body-md text-body-md">
+                                <span class="material-symbols-outlined text-[18px] text-on-surface-variant">person</span>
+                                Tài khoản của tôi
+                            </a>
+                            <a href="/Account/Orders" class="flex items-center gap-2 px-4 py-3 text-on-surface hover:bg-surface-container transition-colors font-body-md text-body-md">
+                                <span class="material-symbols-outlined text-[18px] text-on-surface-variant">receipt_long</span>
+                                Đơn hàng của tôi
+                            </a>
+                            <div class="border-t border-outline-variant"></div>
+                            <form method="post" action="/Account/Logout">
+                                @Html.AntiForgeryToken()
+                                <button type="submit" class="w-full flex items-center gap-2 px-4 py-3 text-error hover:bg-red-50 transition-colors font-body-md text-body-md">
+                                    <span class="material-symbols-outlined text-[18px]">logout</span>
+                                    Đăng xuất
+                                </button>
+                            </form>
+                        </div>
+                    </div>
+                }
+                else
+                {
+                    <!-- Login / Register buttons -->
+                    <a href="/Account/Login" class="hidden sm:flex items-center gap-1 px-4 py-2 text-primary border border-primary rounded-lg hover:bg-primary hover:text-white transition-all font-body-md text-body-md font-semibold">
+                        <span class="material-symbols-outlined text-[18px]">login</span>
+                        Đăng nhập
+                    </a>
+                    <a href="/Account/Register" class="flex items-center gap-1 px-4 py-2 bg-primary text-white rounded-lg hover:bg-primary-container transition-all font-body-md text-body-md font-semibold">
+                        <span class="material-symbols-outlined text-[18px]">person_add</span>
+                        <span class="hidden sm:inline">Đăng ký</span>
+                    </a>
+                }
+            </div>
+        </div>
+    </header>
+    <!-- Secondary Nav (Categories) -->
+    <div class="bg-surface-container-lowest border-b border-outline-variant hidden md:block">
+        <div class="max-w-container-max mx-auto px-gutter py-3 flex items-center justify-between">
+            <ul class="flex gap-8 font-label-md text-label-md text-on-surface-variant">
+                <li><a class="hover:text-primary transition-colors" href="#">Văn học</a></li>
+                <li><a class="hover:text-primary transition-colors" href="#">Kinh tế</a></li>
+                <li><a class="hover:text-primary transition-colors" href="#">Kỹ năng sống</a></li>
+                <li><a class="hover:text-primary transition-colors" href="#">Thiếu nhi</a></li>
+                <li>
+                    <a class="hover:text-primary transition-colors font-bold flex items-center gap-1" href="#">
+                        <span class="material-symbols-outlined text-[16px]">apps</span> Xem tất cả danh mục
+                    </a>
+                </li>
+            </ul>
+        </div>
+    </div>
+    <main class="max-w-container-max mx-auto pb-stack-lg">
+        <!-- Hero Banner Carousel -->
+        <section class="mt-stack-md px-gutter">
+            <div class="relative h-[400px] rounded-xl overflow-hidden shadow-md group">
+                <div class="absolute inset-0 bg-cover bg-center transition-transform duration-700 group-hover:scale-105" data-alt="A grand, atmospheric bookstore library with high mahogany shelves reaching the ceiling. Soft morning sunlight streams through large arched windows, illuminating dust motes and highlighting leather-bound spines. The scene is elegant and intellectual, dominated by deep browns, warm amber glows, and hints of navy blue. The wide shot creates a sense of peaceful scholarly abundance." style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuCEJ6DLI651WmpGDaxDe4hdL6p6M9yBuYOYFc8hUv2UvLhSeB690UZWlqM_PayR3Q6wz8PhyeLmnCWD_EbZ10P5iI3LIhvPIwFHQJhF0lqyMBQV2cwZLpPdu-AaSLVmuMR40mVspyb83Var1wS9pUDG66Wo7qlynleIgQCQMrxrjSLGLToN1fn-fh__-HhG8B_lq2PRIrHirwN0TSvBUVqKqixtPobsFFrABTayluYE-V-KBjnqZyJi')">
+                </div>
+                <div class="absolute inset-0 bg-gradient-to-r from-black/60 to-transparent flex items-center px-12">
+                    <div class="max-w-lg text-white">
+                        <span class="inline-block px-3 py-1 bg-secondary-container text-on-secondary-container rounded-full text-label-md font-bold mb-4">KHUYẾN MÃI THÁNG 10</span>
+                        <h1 class="font-headline-lg text-headline-lg mb-4">Ngày hội Văn học: Ưu đãi lên tới 50%</h1>
+                        <p class="text-body-lg mb-8 opacity-90">Khám phá kho tàng tri thức từ các tác giả nổi tiếng trên toàn thế giới. Giao hàng miễn phí cho đơn hàng từ 250k.</p>
+                        <button class="bg-primary text-white px-8 py-3 rounded-lg font-bold hover:bg-primary-container transition-all flex items-center gap-2">
+                            Mua ngay <span class="material-symbols-outlined">arrow_forward</span>
+                        </button>
+                    </div>
+                </div>
+                <div class="absolute bottom-6 left-1/2 -translate-x-1/2 flex gap-2">
+                    <button class="w-3 h-3 rounded-full bg-white"></button>
+                    <button class="w-3 h-3 rounded-full bg-white/40"></button>
+                    <button class="w-3 h-3 rounded-full bg-white/40"></button>
+                </div>
+            </div>
+        </section>
+        <!-- Categories Section -->
+        <section class="mt-stack-lg px-gutter">
+            <div class="flex justify-between items-end mb-stack-md">
+                <h2 class="font-headline-md text-headline-md text-primary">Danh mục nổi bật</h2>
+            </div>
+            <div class="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-4">
+                <a class="bg-surface-container-low p-6 rounded-xl text-center border border-outline-variant hover:shadow-md hover:-translate-y-1 transition-all" href="#">
+                    <div class="w-12 h-12 bg-primary-fixed rounded-full flex items-center justify-center mx-auto mb-4">
+                        <span class="material-symbols-outlined text-primary text-[28px]">history_edu</span>
+                    </div>
+                    <span class="font-bold text-on-surface">Văn học</span>
+                </a>
+                <a class="bg-surface-container-low p-6 rounded-xl text-center border border-outline-variant hover:shadow-md hover:-translate-y-1 transition-all" href="#">
+                    <div class="w-12 h-12 bg-secondary-container rounded-full flex items-center justify-center mx-auto mb-4">
+                        <span class="material-symbols-outlined text-secondary text-[28px]">trending_up</span>
+                    </div>
+                    <span class="font-bold text-on-surface">Kinh tế</span>
+                </a>
+                <a class="bg-surface-container-low p-6 rounded-xl text-center border border-outline-variant hover:shadow-md hover:-translate-y-1 transition-all" href="#">
+                    <div class="w-12 h-12 bg-tertiary-fixed rounded-full flex items-center justify-center mx-auto mb-4">
+                        <span class="material-symbols-outlined text-on-tertiary-fixed-variant text-[28px]">psychology</span>
+                    </div>
+                    <span class="font-bold text-on-surface">Kỹ năng</span>
+                </a>
+                <a class="bg-surface-container-low p-6 rounded-xl text-center border border-outline-variant hover:shadow-md hover:-translate-y-1 transition-all" href="#">
+                    <div class="w-12 h-12 bg-primary-fixed rounded-full flex items-center justify-center mx-auto mb-4">
+                        <span class="material-symbols-outlined text-primary text-[28px]">child_care</span>
+                    </div>
+                    <span class="font-bold text-on-surface">Thiếu nhi</span>
+                </a>
+                <a class="bg-surface-container-low p-6 rounded-xl text-center border border-outline-variant hover:shadow-md hover:-translate-y-1 transition-all" href="#">
+                    <div class="w-12 h-12 bg-secondary-container rounded-full flex items-center justify-center mx-auto mb-4">
+                        <span class="material-symbols-outlined text-secondary text-[28px]">translate</span>
+                    </div>
+                    <span class="font-bold text-on-surface">Ngoại ngữ</span>
+                </a>
+                <a class="bg-surface-container-low p-6 rounded-xl text-center border border-outline-variant hover:shadow-md hover:-translate-y-1 transition-all" href="#">
+                    <div class="w-12 h-12 bg-tertiary-fixed rounded-full flex items-center justify-center mx-auto mb-4">
+                        <span class="material-symbols-outlined text-on-tertiary-fixed-variant text-[28px]">science</span>
+                    </div>
+                    <span class="font-bold text-on-surface">Khoa học</span>
+                </a>
+            </div>
+        </section>
+        <!-- Sách Nổi Bật -->
+        <section class="mt-stack-lg px-gutter">
+            <div class="flex justify-between items-end mb-stack-md">
+                <h2 class="font-headline-md text-headline-md text-primary">Sách nổi bật</h2>
+                <a class="text-primary font-bold flex items-center gap-1 hover:underline" href="#">Xem thêm <span class="material-symbols-outlined text-[18px]">chevron_right</span></a>
+            </div>
+            <div class="grid grid-cols-2 md:grid-cols-4 gap-gutter">
+                <!-- Book Card Template (Repeat 8 times) -->
+                <script>
+                    const books = [
+                        {title: "Cây Cam Ngọt Của Tôi", author: "José Mauro de Vasconcelos", price: "75.000", oldPrice: "105.000", rating: 5, discount: "-30%"},
+                        {title: "Tâm Lý Học Tội Phạm", author: "Nhiều tác giả", price: "128.000", oldPrice: "160.000", rating: 4, discount: "-20%"},
+                        {title: "Atomic Habits", author: "James Clear", price: "155.000", oldPrice: "189.000", rating: 5, discount: "-18%"},
+                        {title: "Nhà Giả Kim", author: "Paulo Coelho", price: "62.000", oldPrice: "79.000", rating: 5, discount: "-22%"},
+                        {title: "Đắc Nhân Tâm", author: "Dale Carnegie", price: "72.000", oldPrice: "90.000", rating: 4, discount: "-20%"},
+                        {title: "Sói Già Phố Wall", author: "Jordan Belfort", price: "195.000", oldPrice: "245.000", rating: 5, discount: "-20%"},
+                        {title: "Cha Giàu Cha Nghèo", author: "Robert Kiyosaki", price: "115.000", oldPrice: "145.000", rating: 4, discount: "-21%"},
+                        {title: "Hoàng Tử Bé", author: "Antoine de Saint-Exupéry", price: "45.000", oldPrice: "65.000", rating: 5, discount: "-31%"}
+                    ];
+
+                    document.write(books.map((book, idx) => `
+                        <div class="book-card-hover group relative bg-white border border-outline-variant rounded-xl p-4 transition-all hover:shadow-lg">
+                            <div class="relative mb-4 aspect-[3/4] overflow-hidden rounded-lg bg-surface-container-low">
+                                <img src="placeholder" data-alt="Modern book cover design for ${book.title} by ${book.author}. Minimalist aesthetic, elegant typography, high-quality paperback texture. Colors: deep blue, gold foil accents, clean white backgrounds. Studio lighting, high resolution, 8k professional photography style." class="w-full h-full object-cover">
+                                <span class="absolute top-2 left-2 bg-error text-white text-[10px] font-bold px-2 py-1 rounded-full">${book.discount}</span>
+                                <div class="add-to-cart-btn absolute inset-x-0 bottom-0 p-4 opacity-0 transform translate-y-4 transition-all duration-300">
+                                    <button class="w-full bg-secondary text-white py-2 rounded-lg font-bold shadow-lg hover:bg-secondary-container hover:text-on-secondary-container transition-colors flex items-center justify-center gap-2">
+                                        <span class="material-symbols-outlined text-[18px]">shopping_cart</span> Thêm vào giỏ
+                                    </button>
+                                </div>
+                            </div>
+                            <h3 class="font-bold text-on-surface line-clamp-2 min-h-[40px] mb-1 group-hover:text-primary transition-colors">${book.title}</h3>
+                            <p class="text-label-md text-on-surface-variant mb-2">${book.author}</p>
+                            <div class="flex items-center gap-1 mb-2">
+                                ${Array(5).fill(0).map((_, i) => `<span class="material-symbols-outlined text-[14px] ${i < book.rating ? 'text-tertiary-container filled-icon' : 'text-outline-variant'}">star</span>`).join('')}
+                            </div>
+                            <div class="flex items-center gap-3">
+                                <span class="text-primary font-bold">${book.price}đ</span>
+                                <span class="text-on-surface-variant text-[12px] line-through">${book.oldPrice}đ</span>
+                            </div>
+                        </div>
+                    `).join(''));
+                </script>
+            </div>
+        </section>
+        <!-- Featured Section with Shader -->
+        <section class="mt-stack-lg px-gutter">
+            <div class="relative rounded-2xl overflow-hidden p-12 min-h-[300px]">
+
+                <div class="relative z-10 flex flex-col md:flex-row items-center justify-between gap-8">
+                    <div class="max-w-xl text-white">
+                        <h2 class="font-headline-lg text-headline-lg mb-4">Đăng ký thành viên mới</h2>
+                        <p class="text-body-lg opacity-90 mb-6">Nhận ngay voucher giảm giá 50,000đ cho đơn hàng đầu tiên và ưu đãi tích điểm cho mỗi cuốn sách bạn mua.</p>
+                        <div class="flex gap-2">
+                            <input class="px-4 py-2 rounded-lg bg-white/20 border border-white/30 text-white placeholder-white/60 focus:outline-none focus:ring-2 focus:ring-white flex-1" placeholder="Email của bạn..." type="email" />
+                            <button class="bg-white text-primary px-6 py-2 rounded-lg font-bold hover:bg-surface-container transition-all">Đăng ký ngay</button>
+                        </div>
+                    </div>
+                    <div class="hidden md:block">
+                        <span class="material-symbols-outlined text-[120px] text-white opacity-20">mail</span>
+                    </div>
+                </div>
+            </div>
+        </section>
+        <!-- Sách Mới Section -->
+        <section class="mt-stack-lg px-gutter">
+            <div class="flex justify-between items-end mb-stack-md">
+                <h2 class="font-headline-md text-headline-md text-primary">Sách mới về</h2>
+                <div class="flex gap-2">
+                    <button class="p-2 border border-outline-variant rounded-full hover:bg-surface-container transition-all">
+                        <span class="material-symbols-outlined">chevron_left</span>
+                    </button>
+                    <button class="p-2 border border-outline-variant rounded-full hover:bg-surface-container transition-all">
+                        <span class="material-symbols-outlined">chevron_right</span>
+                    </button>
+                </div>
+            </div>
+            <div class="grid grid-cols-2 md:grid-cols-4 gap-gutter">
+                <!-- Reusing Book Card Template but without discount for "Sách Mới" -->
+                <script>
+                    const newBooks = [
+                        {title: "Kiếp Nào Ta Cũng Tìm Thấy Nhau", author: "Brian L. Weiss", price: "125.000", rating: 5},
+                        {title: "Sức Mạnh Của Sự Tĩnh Lặng", author: "Eckhart Tolle", price: "88.000", rating: 4},
+                        {title: "Càng Kỷ Luật Càng Tự Do", author: "Ca Tây", price: "110.000", rating: 5},
+                        {title: "Người Giàu Có Nhất Thành Babylon", author: "George S. Clason", price: "79.000", rating: 5}
+                    ];
+
+                    document.write(newBooks.map((book) => `
+                        <div class="book-card-hover group relative bg-white border border-outline-variant rounded-xl p-4 transition-all hover:shadow-lg">
+                            <div class="relative mb-4 aspect-[3/4] overflow-hidden rounded-lg bg-surface-container-low">
+                                <img src="placeholder" data-alt="Elegantly designed book cover for ${book.title} by ${book.author}. Visual style is modern and minimalist. Professional commercial photography, soft studio lighting, sharp focus on texture and typography. Color palette: sophisticated muted tones, deep navy, slate gray, and cream." class="w-full h-full object-cover">
+                                <span class="absolute top-2 right-2 bg-secondary text-white text-[10px] font-bold px-2 py-1 rounded-full uppercase">Mới</span>
+                                <div class="add-to-cart-btn absolute inset-x-0 bottom-0 p-4 opacity-0 transform translate-y-4 transition-all duration-300">
+                                    <button class="w-full bg-secondary text-white py-2 rounded-lg font-bold shadow-lg hover:bg-secondary-container hover:text-on-secondary-container transition-colors flex items-center justify-center gap-2">
+                                        <span class="material-symbols-outlined text-[18px]">shopping_cart</span> Thêm vào giỏ
+                                    </button>
+                                </div>
+                            </div>
+                            <h3 class="font-bold text-on-surface line-clamp-2 min-h-[40px] mb-1 group-hover:text-primary transition-colors">${book.title}</h3>
+                            <p class="text-label-md text-on-surface-variant mb-2">${book.author}</p>
+                            <div class="flex items-center gap-1 mb-2">
+                                ${Array(5).fill(0).map((_, i) => `<span class="material-symbols-outlined text-[14px] ${i < book.rating ? 'text-tertiary-container filled-icon' : 'text-outline-variant'}">star</span>`).join('')}
+                            </div>
+                            <div class="flex items-center gap-3">
+                                <span class="text-primary font-bold">${book.price}đ</span>
+                            </div>
+                        </div>
+                    `).join(''));
+                </script>
+            </div>
+        </section>
+    </main>
+    <!-- Footer -->
+    <footer class="bg-surface-container-highest border-t border-outline-variant mt-stack-lg">
+        <div class="max-w-container-max mx-auto px-gutter py-stack-lg">
+            <div class="grid grid-cols-1 md:grid-cols-4 gap-8 mb-12">
+                <div class="col-span-1 md:col-span-1">
+                    <h3 class="font-headline-sm text-headline-sm text-primary mb-6">Tiệm Sách Trí Tuệ</h3>
+                    <p class="text-on-surface-variant mb-4">Lan tỏa tri thức, kết nối đam mê. Chúng tôi tự hào mang đến những đầu sách chọn lọc nhất cho độc giả Việt.</p>
+                    <div class="flex gap-4">
+                        <a class="w-10 h-10 rounded-full border border-outline flex items-center justify-center text-on-surface-variant hover:bg-primary hover:text-white transition-all" href="#">
+                            <span class="material-symbols-outlined">face_nod</span>
+                        </a>
+                        <a class="w-10 h-10 rounded-full border border-outline flex items-center justify-center text-on-surface-variant hover:bg-primary hover:text-white transition-all" href="#">
+                            <span class="material-symbols-outlined">share</span>
+                        </a>
+                    </div>
+                </div>
+                <div>
+                    <h4 class="font-bold mb-6 text-on-surface">Về chúng tôi</h4>
+                    <ul class="space-y-3 text-on-surface-variant">
+                        <li><a class="hover:text-primary transition-colors" href="#">Giới thiệu</a></li>
+                        <li><a class="hover:text-primary transition-colors" href="#">Liên hệ</a></li>
+                        <li><a class="hover:text-primary transition-colors" href="#">Tuyển dụng</a></li>
+                        <li><a class="hover:text-primary transition-colors" href="#">Tin tức</a></li>
+                    </ul>
+                </div>
+                <div>
+                    <h4 class="font-bold mb-6 text-on-surface">Hỗ trợ khách hàng</h4>
+                    <ul class="space-y-3 text-on-surface-variant">
+                        <li><a class="hover:text-primary transition-colors" href="#">Chính sách bảo mật</a></li>
+                        <li><a class="hover:text-primary transition-colors" href="#">Điều khoản sử dụng</a></li>
+                        <li><a class="hover:text-primary transition-colors" href="#">Vận chuyển &amp; Giao hàng</a></li>
+                        <li><a class="hover:text-primary transition-colors" href="#">Chính sách đổi trả</a></li>
+                    </ul>
+                </div>
+                <div>
+                    <h4 class="font-bold mb-6 text-on-surface">Liên hệ</h4>
+                    <ul class="space-y-4 text-on-surface-variant">
+                        <li class="flex items-start gap-3">
+                            <span class="material-symbols-outlined text-primary">location_on</span>
+                            <span>Số 123, Đường Láng, Đống Đa, Hà Nội</span>
+                        </li>
+                        <li class="flex items-center gap-3">
+                            <span class="material-symbols-outlined text-primary">call</span>
+                            <span>1900 1234</span>
+                        </li>
+                        <li class="flex items-center gap-3">
+                            <span class="material-symbols-outlined text-primary">mail</span>
+                            <span>support@trituebooks.vn</span>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+            <div class="flex flex-col md:flex-row justify-between items-center pt-8 border-t border-outline-variant gap-4">
+                <p class="text-on-surface-variant text-body-md">© 2024 Tiệm Sách Trí Tuệ. All rights reserved.</p>
+                <div class="flex gap-4 grayscale opacity-60">
+                    <img class="h-6" data-alt="Visa payment provider logo, clean minimalist SVG style." src="https://lh3.googleusercontent.com/aida-public/AB6AXuAS5J9aMt1rkE-XKYaI0W5lcEu7dCY4eb19eel9zxs-9e_SW6so0F7CWZaz9HhSciunpVqLptwOmzGPrLMFeXOECLeyul8sLA70jVTTA2W8LPphCVDTsTyYdzTY_fY96giSicZESohGxwXl4XRWy8ywiXgFBvDPWsuN4XzV2lXIsFd-xUqJ4dgZQzIvDgHGu5Bdog8XuFulrESYsU8BBUym56KwtaF13XKRmP2_yEzjvw-venn8p9oA" />
+                    <img class="h-6" data-alt="Mastercard payment provider logo, clean minimalist SVG style." src="https://lh3.googleusercontent.com/aida-public/AB6AXuBzj7btBS8QCqGx-7MtGGF9oCW3NUzW3RpBbuj3Sgw36ZqU_SFrX0_ZyiY_BXWZj7Zje8E2RnGDFrMVr3I3J9JedwsSdNFK9bvl4CGQgV0gN11Ituir8UECstPSbDz89Tct1RpECMqB1gpYVql2o-_BNPt1thZrQf7iRCFMToWY1l2xWO7RHeN522hfvzr0MLVst7midvet6wvVcy2sLU9HE6baODt_jSfNHu3DItTWtO0AZ4sQOeb6" />
+                    <img class="h-6" data-alt="PayPal payment provider logo, clean minimalist SVG style." src="https://lh3.googleusercontent.com/aida-public/AB6AXuA2DRqFbHql-y4NfmPJ61YRbRRn7TY_SRVW_j1Z25h1Bab5JDb5yNdIQhJKY7gn_6soNLgK6nfk1d5xfU91_cr8UFkHu2UjkHTHaaD6tZlc7VP6scJ6fWtoQyuJ7jnNuzYKfjci35Z_UJfEG7At1mXg1t_LlKz5ns_VtOULqUFIsW4qu_7xH0J52l3Pwg55sq0kbx7e7yVJUShldJv2lkMCbkYHn2503Uq7Sow7QQz9rweFVEyTd8CH" />
+                </div>
+            </div>
+        </div>
+    </footer>
+    <!-- FAB for Quick Scroll -->
+    <button class="fixed bottom-8 right-8 w-12 h-12 bg-primary text-white rounded-full shadow-lg flex items-center justify-center hover:scale-110 transition-transform z-40" onclick="window.scrollTo({top: 0, behavior: 'smooth'})">
+        <span class="material-symbols-outlined">expand_less</span>
+    </button>
+    <script>
+        // Micro-interactions and scroll effects
+        window.addEventListener('scroll', () => {
+            const header = document.querySelector('header');
+            if (window.scrollY > 20) {
+                header.classList.add('shadow-md');
+            } else {
+                header.classList.remove('shadow-md');
+            }
+        });
+
+        // Search bar interaction
+        const searchInput = document.querySelector('input[type="text"]');
+        searchInput.addEventListener('focus', () => {
+            searchInput.parentElement.classList.add('scale-[1.02]');
+        });
+        searchInput.addEventListener('blur', () => {
+            searchInput.parentElement.classList.remove('scale-[1.02]');
+        });
+        // Close user dropdown when clicking outside
+        document.addEventListener('click', (e) => {
+            const dropdown = document.getElementById('userDropdown');
+            if (dropdown && !dropdown.contains(e.target)) {
+                document.getElementById('userMenu')?.classList.add('hidden');
+            }
+        });
+    </script>
+</body>
+</html>
