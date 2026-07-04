@@ -1,0 +1,419 @@
+@model BookVerse.Models.ViewModels.Admin.VoucherListViewModel
+@{
+    Layout = "_AdminLayout";
+    ViewData["Title"] = "Quản lý voucher";
+    ViewData["ActiveMenu"] = "Vouchers";
+}
+
+<div class="page-header">
+    <div class="page-header-left">
+        <h1><i class="bi bi-tag me-2 text-accent"></i>Quản lý voucher</h1>
+        <p>Tổng cộng <strong class="text-accent">@Model.Vouchers.Count</strong> voucher</p>
+    </div>
+    <button type="button" class="btn btn-primary" onclick="openAddModal()">
+        <i class="bi bi-plus-lg"></i> Tạo voucher mới
+    </button>
+</div>
+
+<div id="alertContainer"></div>
+
+<div class="admin-card">
+    <div class="admin-table-wrapper">
+        <table class="admin-table" id="vouchersTable">
+            <thead>
+                <tr>
+                    <th>Mã voucher</th>
+                    <th>% Giảm giá</th>
+                    <th>Ngày hết hạn</th>
+                    <th>Đã dùng</th>
+                    <th>Trạng thái</th>
+                    <th style="width:130px">Thao tác</th>
+                </tr>
+            </thead>
+            <tbody id="vouchersBody">
+                @if (!Model.Vouchers.Any())
+                {
+                    <tr id="emptyRow">
+                        <td colspan="6" class="text-center py-5">
+                            <i class="bi bi-tag" style="font-size:2rem;color:var(--color-text-muted);display:block;margin-bottom:0.75rem"></i>
+                            <span class="text-muted">Chưa có voucher nào. Tạo ngay!</span>
+                        </td>
+                    </tr>
+                }
+                @foreach (var v in Model.Vouchers)
+                {
+                    var isExpired = v.IsExpired;
+                    var effectiveStatus = (v.IsActive == true && !isExpired) ? "active" : "inactive";
+                    <tr id="vrow-@v.VoucherId">
+                        <td>
+                            <div style="display:flex;align-items:center;gap:0.5rem">
+                                <span class="fw-700" style="font-size:0.95rem;font-family:monospace;color:var(--color-gold);letter-spacing:0.05em">
+                                    @v.Code
+                                </span>
+                            </div>
+                        </td>
+                        <td>
+                            <span class="badge badge-info" style="font-size:0.875rem">
+                                <i class="bi bi-percent me-1"></i>@v.DiscountPercent%
+                            </span>
+                        </td>
+                        <td>
+                            @if (isExpired)
+                            {
+                                <span style="color:var(--color-danger)">
+                                    <i class="bi bi-calendar-x me-1"></i>@v.ExpiryDate?.ToString("dd/MM/yyyy")
+                                    <small>(Đã hết hạn)</small>
+                                </span>
+                            }
+                            else
+                            {
+                                <span>
+                                    <i class="bi bi-calendar-check me-1 text-muted"></i>@v.ExpiryDate?.ToString("dd/MM/yyyy")
+                                </span>
+                            }
+                        </td>
+                        <td>
+                            <span class="badge badge-secondary">@v.UsedCount lượt</span>
+                        </td>
+                        <td>
+                            <div style="display:flex;align-items:center;gap:0.625rem">
+                                @if (effectiveStatus == "active")
+                                {
+                                    <span class="status-badge status-da-giao" id="vstatus-@v.VoucherId">Đang hoạt động</span>
+                                }
+                                else
+                                {
+                                    <span class="status-badge status-da-huy" id="vstatus-@v.VoucherId">
+                                        @(isExpired ? "Đã hết hạn" : "Đã tắt")
+                                    </span>
+                                }
+                                @if (!isExpired)
+                                {
+                                    <label class="toggle-switch" title="Bật/tắt voucher">
+                                        <input type="checkbox" @(v.IsActive == true ? "checked" : "")
+                                               onchange="toggleActive(@v.VoucherId, this)" />
+                                        <span class="toggle-slider"></span>
+                                    </label>
+                                }
+                            </div>
+                        </td>
+                        <td>
+                            <div class="table-actions">
+                                <button type="button" class="btn-action btn-action-edit"
+                                        title="Chỉnh sửa" onclick="openEditModal(@v.VoucherId)">
+                                    <i class="bi bi-pencil"></i>
+                                </button>
+                                <button type="button" class="btn-action btn-action-delete"
+                                        title="Xóa" onclick="confirmDelete(@v.VoucherId, '@v.Code', @v.UsedCount)">
+                                    <i class="bi bi-trash"></i>
+                                </button>
+                            </div>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<!-- Add/Edit Modal -->
+<div class="modal fade admin-modal" id="voucherModal" tabindex="-1">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="vModalTitle">
+                    <i class="bi bi-tag me-2 text-accent"></i>Tạo voucher
+                </h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <div id="vModalAlert" style="display:none"></div>
+
+                <div class="mb-3">
+                    <label class="form-label">Mã voucher <span class="text-accent">*</span></label>
+                    <input type="text" id="vCode" class="form-control" placeholder="VD: SUMMER2025"
+                           maxlength="50" style="text-transform:uppercase;font-family:monospace;letter-spacing:0.05em" />
+                    <small class="text-muted">Chỉ dùng chữ hoa, số, dấu _ hoặc -</small>
+                    <div id="vCodeError" class="text-danger small mt-1" style="display:none"></div>
+                </div>
+
+                <div class="mb-3">
+                    <label class="form-label">Phần trăm giảm giá (%) <span class="text-accent">*</span></label>
+                    <div class="position-relative">
+                        <input type="number" id="vDiscount" class="form-control"
+                               placeholder="10" min="1" max="100" />
+                        <span style="position:absolute;right:1rem;top:50%;transform:translateY(-50%);color:var(--color-text-muted)">%</span>
+                    </div>
+                    <div id="vDiscountError" class="text-danger small mt-1" style="display:none"></div>
+                </div>
+
+                <div class="mb-3">
+                    <label class="form-label">Ngày hết hạn <span class="text-accent">*</span></label>
+                    <input type="date" id="vExpiry" class="form-control" />
+                    <div id="vExpiryError" class="text-danger small mt-1" style="display:none"></div>
+                </div>
+
+                <div class="d-flex align-items-center justify-content-between">
+                    <div>
+                        <div class="fw-600" style="color:var(--color-text-primary)">Kích hoạt ngay</div>
+                        <small class="text-muted">Voucher có hiệu lực khi được bật</small>
+                    </div>
+                    <label class="toggle-switch">
+                        <input type="checkbox" id="vIsActive" checked />
+                        <span class="toggle-slider"></span>
+                    </label>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary btn-sm" data-bs-dismiss="modal">Hủy</button>
+                <button type="button" class="btn btn-primary btn-sm" id="vSaveBtn" onclick="saveVoucher()">
+                    <i class="bi bi-check-lg me-1"></i><span id="vSaveBtnText">Tạo voucher</span>
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Delete Modal -->
+<div class="modal fade admin-modal" id="deleteModal" tabindex="-1">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title"><i class="bi bi-trash me-2 text-accent"></i>Xóa voucher</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body"><p id="vDeleteMsg"></p></div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary btn-sm" data-bs-dismiss="modal">Hủy</button>
+                <button type="button" class="btn btn-primary btn-sm" id="confirmVDeleteBtn">Xác nhận</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+<script>
+    let currentVoucherId = 0;
+    let voucherModal, deleteModal;
+
+    document.addEventListener('DOMContentLoaded', () => {
+        voucherModal = new bootstrap.Modal(document.getElementById('voucherModal'));
+        deleteModal = new bootstrap.Modal(document.getElementById('deleteModal'));
+
+        // Set min date to tomorrow
+        const tomorrow = new Date();
+        tomorrow.setDate(tomorrow.getDate() + 1);
+        document.getElementById('vExpiry').min = tomorrow.toISOString().split('T')[0];
+        document.getElementById('vExpiry').value = new Date(Date.now() + 30 * 86400000).toISOString().split('T')[0];
+    });
+
+    function showAlert(msg, type = 'success') {
+        const el = document.getElementById('alertContainer');
+        const icon = type === 'success' ? 'check-circle-fill' : (type === 'warning' ? 'exclamation-triangle-fill' : 'x-circle-fill');
+        el.innerHTML = `<div class="alert alert-${type} mb-4 fade-in"><i class="bi bi-${icon}"></i><span>${msg}</span></div>`;
+        setTimeout(() => el.innerHTML = '', 5000);
+    }
+
+    function clearErrors() {
+        ['vCodeError','vDiscountError','vExpiryError'].forEach(id => {
+            const el = document.getElementById(id);
+            if (el) el.style.display = 'none';
+        });
+        document.getElementById('vModalAlert').style.display = 'none';
+    }
+
+    function openAddModal() {
+        currentVoucherId = 0;
+        document.getElementById('vModalTitle').innerHTML = '<i class="bi bi-tag me-2 text-accent"></i>Tạo voucher mới';
+        document.getElementById('vCode').value = '';
+        document.getElementById('vCode').disabled = false;
+        document.getElementById('vDiscount').value = '';
+        document.getElementById('vExpiry').value = new Date(Date.now() + 30 * 86400000).toISOString().split('T')[0];
+        document.getElementById('vIsActive').checked = true;
+        document.getElementById('vSaveBtnText').textContent = 'Tạo voucher';
+        clearErrors();
+        voucherModal.show();
+    }
+
+    async function openEditModal(id) {
+        currentVoucherId = id;
+        document.getElementById('vModalTitle').innerHTML = '<i class="bi bi-pencil me-2 text-accent"></i>Chỉnh sửa voucher';
+        document.getElementById('vSaveBtnText').textContent = 'Lưu thay đổi';
+        clearErrors();
+
+        const resp = await fetch(`/Admin/Vouchers/GetById/${id}`);
+        const json = await resp.json();
+        if (json.success) {
+            document.getElementById('vCode').value = json.data.code;
+            document.getElementById('vCode').disabled = false;
+            document.getElementById('vDiscount').value = json.data.discountPercent;
+            document.getElementById('vExpiry').value = json.data.expiryDate;
+            document.getElementById('vIsActive').checked = json.data.isActive;
+        }
+        voucherModal.show();
+    }
+
+    function validateForm() {
+        let valid = true;
+        const code = document.getElementById('vCode').value.trim();
+        const discount = parseInt(document.getElementById('vDiscount').value);
+        const expiry = document.getElementById('vExpiry').value;
+
+        if (!code || !/^[A-Z0-9_\-]+$/i.test(code)) {
+            const el = document.getElementById('vCodeError');
+            el.textContent = 'Mã voucher không hợp lệ (chỉ dùng chữ hoa, số, _ hoặc -)';
+            el.style.display = 'block';
+            valid = false;
+        }
+        if (!discount || discount < 1 || discount > 100) {
+            const el = document.getElementById('vDiscountError');
+            el.textContent = 'Phần trăm giảm phải từ 1 đến 100';
+            el.style.display = 'block';
+            valid = false;
+        }
+        if (!expiry || new Date(expiry) <= new Date()) {
+            const el = document.getElementById('vExpiryError');
+            el.textContent = 'Ngày hết hạn phải sau ngày hiện tại';
+            el.style.display = 'block';
+            valid = false;
+        }
+        return valid;
+    }
+
+    async function saveVoucher() {
+        clearErrors();
+        if (!validateForm()) return;
+
+        const btn = document.getElementById('vSaveBtn');
+        btn.disabled = true;
+        btn.innerHTML = '<span class="spinner-border spinner-border-sm me-1"></span>Đang lưu...';
+
+        const body = {
+            voucherId: currentVoucherId,
+            code: document.getElementById('vCode').value.trim().toUpperCase(),
+            discountPercent: parseInt(document.getElementById('vDiscount').value),
+            expiryDate: document.getElementById('vExpiry').value + 'T00:00:00',
+            isActive: document.getElementById('vIsActive').checked
+        };
+
+        const url = currentVoucherId === 0 ? '/Admin/Vouchers/Create' : '/Admin/Vouchers/Edit';
+
+        try {
+            const resp = await fetch(url, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(body)
+            });
+            const json = await resp.json();
+
+            if (json.success) {
+                voucherModal.hide();
+                showAlert(json.message);
+                if (currentVoucherId === 0) {
+                    addRowToTable(json.data);
+                } else {
+                    updateRow(json.data);
+                }
+            } else {
+                const alertEl = document.getElementById('vModalAlert');
+                alertEl.innerHTML = `<div class="alert alert-danger"><i class="bi bi-x-circle-fill me-2"></i>${json.message}</div>`;
+                alertEl.style.display = 'block';
+            }
+        } finally {
+            btn.disabled = false;
+            btn.innerHTML = '<i class="bi bi-check-lg me-1"></i><span id="vSaveBtnText">Lưu</span>';
+        }
+    }
+
+    function addRowToTable(data) {
+        const tbody = document.getElementById('vouchersBody');
+        document.getElementById('emptyRow')?.remove();
+        const tr = document.createElement('tr');
+        tr.id = `vrow-${data.voucherId}`;
+        tr.className = 'fade-in';
+        tr.innerHTML = `
+            <td><span class="fw-700" style="font-family:monospace;color:var(--color-gold)">${data.code}</span></td>
+            <td><span class="badge badge-info">${data.discountPercent}%</span></td>
+            <td><i class="bi bi-calendar-check me-1 text-muted"></i>${data.expiryDate}</td>
+            <td><span class="badge badge-secondary">0 lượt</span></td>
+            <td>
+                <div style="display:flex;align-items:center;gap:0.625rem">
+                    <span class="status-badge ${data.isActive ? 'status-da-giao' : 'status-da-huy'}" id="vstatus-${data.voucherId}">
+                        ${data.isActive ? 'Đang hoạt động' : 'Đã tắt'}
+                    </span>
+                    <label class="toggle-switch">
+                        <input type="checkbox" ${data.isActive ? 'checked' : ''} onchange="toggleActive(${data.voucherId}, this)" />
+                        <span class="toggle-slider"></span>
+                    </label>
+                </div>
+            </td>
+            <td>
+                <div class="table-actions">
+                    <button class="btn-action btn-action-edit" onclick="openEditModal(${data.voucherId})"><i class="bi bi-pencil"></i></button>
+                    <button class="btn-action btn-action-delete" onclick="confirmDelete(${data.voucherId}, '${data.code}', 0)"><i class="bi bi-trash"></i></button>
+                </div>
+            </td>`;
+        tbody.appendChild(tr);
+    }
+
+    function updateRow(data) {
+        const row = document.getElementById(`vrow-${data.voucherId}`);
+        if (!row) return;
+        row.querySelector('td:first-child span').textContent = data.code;
+        row.querySelector('td:nth-child(2) span').textContent = data.discountPercent + '%';
+    }
+
+    async function toggleActive(id, checkbox) {
+        const resp = await fetch(`/Admin/Vouchers/ToggleActive?id=${id}`, { method: 'POST' });
+        const json = await resp.json();
+        if (!json.success) {
+            checkbox.checked = !checkbox.checked;
+            showAlert('Có lỗi xảy ra!', 'danger');
+        } else {
+            const statusEl = document.getElementById(`vstatus-${id}`);
+            if (statusEl) {
+                statusEl.className = `status-badge ${json.isActive ? 'status-da-giao' : 'status-da-huy'}`;
+                statusEl.textContent = json.isActive ? 'Đang hoạt động' : 'Đã tắt';
+            }
+        }
+    }
+
+    function confirmDelete(id, code, usedCount) {
+        const msg = document.getElementById('vDeleteMsg');
+        if (usedCount > 0) {
+            msg.innerHTML = `Voucher <strong class="text-gold">${code}</strong> đã được dùng ${usedCount} lần.<br>Voucher sẽ bị <strong>vô hiệu hóa</strong> thay vì xóa hoàn toàn.`;
+        } else {
+            msg.innerHTML = `Bạn có chắc muốn xóa voucher <strong class="text-gold">${code}</strong>?`;
+        }
+
+        const confirmBtn = document.getElementById('confirmVDeleteBtn');
+        confirmBtn.onclick = async () => {
+            confirmBtn.disabled = true;
+            confirmBtn.innerHTML = '<span class="spinner-border spinner-border-sm me-1"></span>';
+
+            const resp = await fetch(`/Admin/Vouchers/Delete?id=${id}`, { method: 'POST' });
+            const json = await resp.json();
+            deleteModal.hide();
+
+            if (json.success) {
+                showAlert(json.message, json.softDelete ? 'warning' : 'success');
+                if (!json.softDelete) {
+                    document.getElementById(`vrow-${id}`)?.remove();
+                } else {
+                    const statusEl = document.getElementById(`vstatus-${id}`);
+                    if (statusEl) {
+                        statusEl.className = 'status-badge status-da-huy';
+                        statusEl.textContent = 'Đã tắt';
+                    }
+                }
+            } else {
+                showAlert(json.message, 'danger');
+            }
+            confirmBtn.disabled = false;
+            confirmBtn.innerHTML = 'Xác nhận';
+        };
+
+        deleteModal.show();
+    }
+</script>
+}

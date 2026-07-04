@@ -1,0 +1,314 @@
+@model BookVerse.Models.ViewModels.Admin.ReportViewModel
+@{
+    Layout = "_AdminLayout";
+    ViewData["Title"] = "Thống kê & Báo cáo";
+    ViewData["ActiveMenu"] = "Reports";
+    string FormatCurrency(decimal p) => p.ToString("N0") + " ₫";
+}
+
+<!-- Page Header -->
+<div class="page-header">
+    <div class="page-header-left">
+        <h1><i class="bi bi-bar-chart-line me-2 text-accent"></i>Thống kê & Báo cáo</h1>
+        <p>Phân tích hiệu suất kinh doanh theo thời gian</p>
+    </div>
+    <div style="display:flex;gap:0.75rem">
+        <a href="/Admin/Reports/ExportExcel?fromDate=@Model.FromDate&toDate=@Model.ToDate"
+           class="btn btn-gold btn-sm" id="exportExcelBtn">
+            <i class="bi bi-file-earmark-excel"></i> Xuất Excel
+        </a>
+        <button type="button" class="btn btn-secondary btn-sm" onclick="window.print()">
+            <i class="bi bi-printer"></i> In / Xuất PDF
+        </button>
+    </div>
+</div>
+
+<!-- Date Filter -->
+<div class="admin-card mb-4 no-print">
+    <form method="get" action="/Admin/Reports" id="reportForm">
+        <div class="date-filter-bar">
+            <div style="display:flex;align-items:center;gap:0.5rem">
+                <label class="text-muted" style="white-space:nowrap;font-size:0.875rem">Từ ngày</label>
+                <input type="date" name="fromDate" class="form-control" style="max-width:170px" value="@Model.FromDate" />
+            </div>
+            <div style="display:flex;align-items:center;gap:0.5rem">
+                <label class="text-muted" style="white-space:nowrap;font-size:0.875rem">Đến ngày</label>
+                <input type="date" name="toDate" class="form-control" style="max-width:170px" value="@Model.ToDate" />
+            </div>
+
+            <div style="display:flex;align-items:center;gap:0.5rem">
+                <label class="text-muted" style="white-space:nowrap;font-size:0.875rem">Nhóm theo</label>
+                <select name="groupBy" class="form-select" style="max-width:140px">
+                    <option value="day" selected="@(Model.GroupBy == "day")">Theo ngày</option>
+                    <option value="week" selected="@(Model.GroupBy == "week")">Theo tuần</option>
+                    <option value="month" selected="@(Model.GroupBy == "month")">Theo tháng</option>
+                </select>
+            </div>
+
+            <button type="submit" class="btn btn-primary btn-sm">
+                <i class="bi bi-search"></i> Xem báo cáo
+            </button>
+
+            <!-- Quick presets -->
+            <div style="display:flex;gap:0.5rem;margin-left:auto;flex-wrap:wrap">
+                <button type="button" class="btn btn-sm" style="background:rgba(255,255,255,0.05);color:var(--color-text-muted)" onclick="setPreset('month')">Tháng này</button>
+                <button type="button" class="btn btn-sm" style="background:rgba(255,255,255,0.05);color:var(--color-text-muted)" onclick="setPreset('lastmonth')">Tháng trước</button>
+                <button type="button" class="btn btn-sm" style="background:rgba(255,255,255,0.05);color:var(--color-text-muted)" onclick="setPreset('year')">Năm nay</button>
+            </div>
+        </div>
+    </form>
+</div>
+
+<!-- Summary Cards -->
+<div class="report-summary-grid">
+    <div class="stat-card revenue">
+        <div class="stat-card-header">
+            <span class="stat-card-label">Tổng doanh thu</span>
+            <div class="stat-card-icon"><i class="bi bi-currency-dollar"></i></div>
+        </div>
+        <div class="stat-card-value">@FormatCurrency(Model.TotalRevenue)</div>
+        <div class="stat-card-change">
+            <span>Từ @Model.FromDate?.Replace("-", "/") đến @Model.ToDate?.Replace("-", "/")</span>
+        </div>
+    </div>
+
+    <div class="stat-card orders">
+        <div class="stat-card-header">
+            <span class="stat-card-label">Tổng đơn hàng</span>
+            <div class="stat-card-icon"><i class="bi bi-bag-check"></i></div>
+        </div>
+        <div class="stat-card-value">@Model.TotalOrders.ToString("N0")</div>
+        <div class="stat-card-change">
+            <span>@Model.TotalBooksSold sách đã bán</span>
+        </div>
+    </div>
+
+    <div class="stat-card books">
+        <div class="stat-card-header">
+            <span class="stat-card-label">Giá trị đơn TB</span>
+            <div class="stat-card-icon"><i class="bi bi-calculator"></i></div>
+        </div>
+        <div class="stat-card-value">@FormatCurrency(Model.AverageOrderValue)</div>
+        <div class="stat-card-change">
+            <span>Trên mỗi đơn hàng</span>
+        </div>
+    </div>
+</div>
+
+<!-- Revenue Chart -->
+<div class="admin-card mb-4">
+    <div class="admin-card-header">
+        <h3 class="admin-card-title">
+            <i class="bi bi-graph-up-arrow"></i>
+            Biểu đồ doanh thu — @(Model.GroupBy == "day" ? "theo ngày" : Model.GroupBy == "week" ? "theo tuần" : "theo tháng")
+        </h3>
+    </div>
+    <div class="admin-card-body">
+        @if (!Model.ChartLabels.Any())
+        {
+            <div class="text-center py-5">
+                <i class="bi bi-bar-chart" style="font-size:3rem;color:var(--color-text-muted);display:block;margin-bottom:1rem"></i>
+                <p class="text-muted">Không có dữ liệu trong khoảng thời gian này</p>
+            </div>
+        }
+        else
+        {
+            <div class="chart-container" style="height: 300px">
+                <canvas id="revenueReportChart"></canvas>
+            </div>
+        }
+    </div>
+</div>
+
+<!-- Top Books & Top Customers -->
+<div class="row g-4">
+    <!-- Top 10 Books -->
+    <div class="col-lg-7">
+        <div class="admin-card">
+            <div class="admin-card-header">
+                <h3 class="admin-card-title"><i class="bi bi-trophy"></i>Top 10 sách bán chạy nhất</h3>
+            </div>
+            <div class="admin-table-wrapper">
+                <table class="admin-table">
+                    <thead>
+                        <tr>
+                            <th>#</th>
+                            <th>Tên sách</th>
+                            <th>Danh mục</th>
+                            <th>SL bán</th>
+                            <th class="text-end">Doanh thu</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @if (!Model.TopBooks.Any())
+                        {
+                            <tr>
+                                <td colspan="5" class="text-center py-4 text-muted">Không có dữ liệu</td>
+                            </tr>
+                        }
+                        @{int rank = 1;}
+                        @foreach (var book in Model.TopBooks)
+                        {
+                            var medal = rank <= 3 ? new[] { "🥇", "🥈", "🥉" }[rank - 1] : rank.ToString();
+                            <tr>
+                                <td style="font-size:1.1rem;text-align:center">@medal</td>
+                                <td>
+                                    <div class="fw-600" style="color:var(--color-text-primary)">@book.Title</div>
+                                    <div style="font-size:0.8rem;color:var(--color-text-muted)">@book.Author</div>
+                                </td>
+                                <td><span class="badge badge-info">@book.CategoryName</span></td>
+                                <td><span class="fw-600">@book.TotalSold</span></td>
+                                <td class="text-end fw-600 text-gold">@FormatCurrency(book.TotalRevenue)</td>
+                            </tr>
+                            rank++;
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <!-- Top Customers -->
+    <div class="col-lg-5">
+        <div class="admin-card">
+            <div class="admin-card-header">
+                <h3 class="admin-card-title"><i class="bi bi-people"></i>Top khách hàng</h3>
+            </div>
+            <div class="admin-table-wrapper">
+                <table class="admin-table">
+                    <thead>
+                        <tr>
+                            <th>#</th>
+                            <th>Khách hàng</th>
+                            <th>Số đơn</th>
+                            <th class="text-end">Chi tiêu</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @if (!Model.TopCustomers.Any())
+                        {
+                            <tr>
+                                <td colspan="4" class="text-center py-4 text-muted">Không có dữ liệu</td>
+                            </tr>
+                        }
+                        @{int crank = 1;}
+                        @foreach (var c in Model.TopCustomers)
+                        {
+                            <tr>
+                                <td class="fw-600 text-accent">@(crank++)</td>
+                                <td>
+                                    <div style="display:flex;align-items:center;gap:0.5rem">
+                                        <div class="user-avatar" style="width:30px;height:30px;font-size:0.75rem">
+                                            @(c.Name.FirstOrDefault().ToString().ToUpper())
+                                        </div>
+                                        <div>
+                                            <div class="fw-500" style="color:var(--color-text-primary);font-size:0.875rem">@c.Name</div>
+                                            <div style="font-size:0.75rem;color:var(--color-text-muted)">@c.Email</div>
+                                        </div>
+                                    </div>
+                                </td>
+                                <td>@c.OrderCount đơn</td>
+                                <td class="text-end fw-600 text-gold" style="font-size:0.875rem">@FormatCurrency(c.TotalSpent)</td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+<script>
+    // Revenue chart
+    const labels = @Html.Raw(System.Text.Json.JsonSerializer.Serialize(Model.ChartLabels));
+    const revenues = @Html.Raw(System.Text.Json.JsonSerializer.Serialize(Model.ChartRevenues));
+
+    if (document.getElementById('revenueReportChart') && labels.length > 0) {
+        new Chart(document.getElementById('revenueReportChart'), {
+            type: 'bar',
+            data: {
+                labels: labels,
+                datasets: [{
+                    label: 'Doanh thu (₫)',
+                    data: revenues,
+                    backgroundColor: 'rgba(233,69,96,0.6)',
+                    borderColor: '#e94560',
+                    borderWidth: 1.5,
+                    borderRadius: 6,
+                    borderSkipped: false
+                }, {
+                    label: 'Xu hướng',
+                    data: revenues,
+                    type: 'line',
+                    borderColor: '#f5a623',
+                    backgroundColor: 'transparent',
+                    borderWidth: 2,
+                    tension: 0.4,
+                    pointRadius: 3,
+                    pointBackgroundColor: '#f5a623'
+                }]
+            },
+            options: {
+                responsive: true, maintainAspectRatio: false,
+                interaction: { intersect: false, mode: 'index' },
+                plugins: {
+                    legend: { labels: { color: 'rgba(160,174,192,0.9)', font: { family: 'Inter', size: 12 } } },
+                    tooltip: {
+                        backgroundColor: '#16213e',
+                        borderColor: 'rgba(255,255,255,0.1)',
+                        borderWidth: 1,
+                        titleColor: '#fff',
+                        bodyColor: 'rgba(160,174,192,0.9)',
+                        padding: 10,
+                        callbacks: {
+                            label: ctx => ' ' + Number(ctx.raw).toLocaleString('vi-VN') + ' ₫'
+                        }
+                    }
+                },
+                scales: {
+                    x: { ticks: { color: 'rgba(160,174,192,0.7)', font: { size: 11 } }, grid: { color: 'rgba(255,255,255,0.05)' } },
+                    y: {
+                        ticks: {
+                            color: 'rgba(160,174,192,0.7)',
+                            font: { size: 11 },
+                            callback: v => Number(v).toLocaleString('vi-VN') + ' ₫'
+                        },
+                        grid: { color: 'rgba(255,255,255,0.05)' },
+                        beginAtZero: true
+                    }
+                }
+            }
+        });
+    }
+
+    // Date presets
+    function setPreset(type) {
+        const now = new Date();
+        let from, to;
+        if (type === 'month') {
+            from = new Date(now.getFullYear(), now.getMonth(), 1);
+            to = now;
+        } else if (type === 'lastmonth') {
+            from = new Date(now.getFullYear(), now.getMonth() - 1, 1);
+            to = new Date(now.getFullYear(), now.getMonth(), 0);
+        } else {
+            from = new Date(now.getFullYear(), 0, 1);
+            to = now;
+        }
+        document.querySelector('input[name="fromDate"]').value = from.toISOString().split('T')[0];
+        document.querySelector('input[name="toDate"]').value = to.toISOString().split('T')[0];
+        document.getElementById('reportForm').submit();
+    }
+
+    // Export loading state
+    document.getElementById('exportExcelBtn')?.addEventListener('click', function() {
+        const btn = this;
+        btn.innerHTML = '<span class="spinner-border spinner-border-sm me-1"></span>Đang xuất...';
+        setTimeout(() => {
+            btn.innerHTML = '<i class="bi bi-file-earmark-excel"></i> Xuất Excel';
+        }, 3000);
+    });
+</script>
+}

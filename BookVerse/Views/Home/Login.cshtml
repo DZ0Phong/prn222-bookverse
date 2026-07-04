@@ -1,0 +1,241 @@
+﻿@{
+    Layout = null;
+}
+<!DOCTYPE html>
+
+<html class="light" lang="vi">
+<head>
+    <meta charset="utf-8" />
+    <meta content="width=device-width, initial-scale=1.0" name="viewport" />
+    <title>Đăng nhập | Tiệm Sách Trí Tuệ</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&amp;display=swap" rel="stylesheet" />
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet" />
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet" />
+    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+    <script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "surface-container": "#eaedff",
+                        "background": "#faf8ff",
+                        "tertiary-fixed-dim": "#ffb95f",
+                        "on-secondary-fixed": "#002117",
+                        "surface-variant": "#dae2fd",
+                        "surface-container-lowest": "#ffffff",
+                        "primary-container": "#2c3e90",
+                        "surface-dim": "#d2d9f4",
+                        "on-secondary-fixed-variant": "#06513e",
+                        "on-tertiary-fixed-variant": "#653e00",
+                        "on-surface": "#131b2e",
+                        "tertiary": "#452900",
+                        "primary": "#102579",
+                        "surface-bright": "#faf8ff",
+                        "on-background": "#131b2e",
+                        "surface-container-high": "#e2e7ff",
+                        "on-tertiary-fixed": "#2a1700",
+                        "secondary-fixed": "#aef0d6",
+                        "surface-container-highest": "#dae2fd",
+                        "tertiary-container": "#633d00",
+                        "tertiary-fixed": "#ffddb8",
+                        "primary-fixed": "#dee1ff",
+                        "on-secondary": "#ffffff",
+                        "surface-container-low": "#f2f3ff",
+                        "on-primary-container": "#9faeff",
+                        "secondary-container": "#acedd3",
+                        "on-primary": "#ffffff",
+                        "outline-variant": "#c5c5d3",
+                        "inverse-primary": "#b9c3ff",
+                        "on-tertiary": "#ffffff",
+                        "on-secondary-container": "#2d6e59",
+                        "on-error": "#ffffff",
+                        "on-tertiary-container": "#f8a00f",
+                        "on-error-container": "#93000a",
+                        "on-surface-variant": "#454651",
+                        "inverse-surface": "#283044",
+                        "error-container": "#ffdad6",
+                        "on-primary-fixed-variant": "#2e3f91",
+                        "outline": "#757683",
+                        "on-primary-fixed": "#001258",
+                        "secondary-fixed-dim": "#93d4ba",
+                        "error": "#ba1a1a",
+                        "surface": "#faf8ff",
+                        "primary-fixed-dim": "#b9c3ff",
+                        "surface-tint": "#4758ab",
+                        "inverse-on-surface": "#eef0ff",
+                        "secondary": "#286955"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                    "spacing": {
+                        "margin-mobile": "1rem",
+                        "stack-md": "1rem",
+                        "stack-sm": "0.5rem",
+                        "gutter": "1.5rem",
+                        "stack-lg": "2rem",
+                        "container-max": "1280px"
+                    },
+                    "fontFamily": {
+                        "headline-lg": ["Inter"],
+                        "body-lg": ["Inter"],
+                        "body-md": ["Inter"],
+                        "headline-lg-mobile": ["Inter"],
+                        "headline-md": ["Inter"],
+                        "headline-sm": ["Inter"],
+                        "label-md": ["Inter"]
+                    },
+                    "fontSize": {
+                        "headline-lg": ["32px", {"lineHeight": "40px", "letterSpacing": "-0.02em", "fontWeight": "700"}],
+                        "body-lg": ["16px", {"lineHeight": "24px", "fontWeight": "400"}],
+                        "body-md": ["14px", {"lineHeight": "20px", "fontWeight": "400"}],
+                        "headline-lg-mobile": ["24px", {"lineHeight": "32px", "letterSpacing": "-0.02em", "fontWeight": "700"}],
+                        "headline-md": ["20px", {"lineHeight": "28px", "fontWeight": "600"}],
+                        "headline-sm": ["16px", {"lineHeight": "24px", "fontWeight": "600"}],
+                        "label-md": ["12px", {"lineHeight": "16px", "letterSpacing": "0.05em", "fontWeight": "500"}]
+                    }
+                },
+            },
+        }
+    </script>
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #faf8ff;
+        }
+
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+
+        .glass-card {
+            background: rgba(255, 255, 255, 0.8);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+        }
+
+        .login-mesh-bg {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+            overflow: hidden;
+        }
+    </style>
+</head>
+<body class="flex flex-col min-h-screen">
+    <main class="flex-grow flex items-center justify-center px-margin-mobile relative overflow-hidden">
+        <!-- Atmospheric Background Element -->
+        <div class="login-mesh-bg">
+            <div class="absolute top-[-10%] left-[-10%] w-[50%] h-[50%] bg-primary opacity-10 blur-[120px] rounded-full"></div>
+            <div class="absolute bottom-[-10%] right-[-10%] w-[50%] h-[50%] bg-secondary opacity-10 blur-[120px] rounded-full"></div>
+        </div>
+        <!-- Login Card -->
+        <div class="w-full max-w-[440px] glass-card shadow-lg rounded-xl p-8 md:p-10 transition-all duration-300">
+            <!-- Brand Identity -->
+            <div class="flex flex-col items-center mb-8">
+                <div class="w-14 h-14 bg-primary rounded-lg flex items-center justify-center mb-4 shadow-md">
+                    <span class="material-symbols-outlined text-on-primary text-[32px]">menu_book</span>
+                </div>
+                <h1 class="font-headline-md text-headline-md text-primary tracking-tight">Tiệm Sách Trí Tuệ</h1>
+                <p class="font-body-md text-body-md text-on-surface-variant mt-2">Chào mừng bạn quay trở lại</p>
+            </div>
+            <!-- Login Form -->
+            <form action="#" class="space-y-stack-md" method="POST">
+                <h2 class="font-headline-sm text-headline-sm text-on-surface mb-6">Đăng nhập</h2>
+                <!-- Email Input -->
+                <div class="space-y-1.5">
+                    <label class="font-label-md text-label-md text-on-surface-variant uppercase tracking-wider" for="email">Email</label>
+                    <div class="relative">
+                        <span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-outline text-[20px]">mail</span>
+                        <input class="w-full pl-10 pr-4 py-3 bg-white border border-outline-variant rounded-lg focus:ring-2 focus:ring-primary focus:border-primary transition-all font-body-md text-body-md outline-none" id="email" name="email" placeholder="example@gmail.com" required="" type="email" />
+                    </div>
+                </div>
+                <!-- Password Input -->
+                <div class="space-y-1.5">
+                    <div class="flex justify-between items-center">
+                        <label class="font-label-md text-label-md text-on-surface-variant uppercase tracking-wider" for="password">Mật khẩu</label>
+                    </div>
+                    <div class="relative">
+                        <span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-outline text-[20px]">lock</span>
+                        <input class="w-full pl-10 pr-12 py-3 bg-white border border-outline-variant rounded-lg focus:ring-2 focus:ring-primary focus:border-primary transition-all font-body-md text-body-md outline-none" id="password" name="password" placeholder="••••••••" required="" type="password" />
+                        <button class="absolute right-3 top-1/2 -translate-y-1/2 text-outline hover:text-primary transition-colors focus:outline-none" id="togglePassword" type="button">
+                            <span class="material-symbols-outlined text-[20px]" id="eyeIcon">visibility</span>
+                        </button>
+                    </div>
+                </div>
+                <!-- Forgot Password -->
+                <div class="flex justify-end">
+                    <a class="font-body-md text-body-md text-primary hover:underline transition-all" href="#">Quên mật khẩu?</a>
+                </div>
+                <!-- Primary Login Button -->
+                <button class="w-full bg-primary text-on-primary py-3.5 rounded-lg font-headline-sm text-headline-sm hover:bg-primary-container hover:shadow-md active:scale-95 transition-all duration-200 mt-2" type="submit">
+                    Đăng nhập
+                </button>
+            </form>
+            <!-- Divider -->
+            <div class="relative flex items-center py-8">
+                <div class="flex-grow border-t border-outline-variant"></div>
+                <span class="flex-shrink mx-4 font-label-md text-label-md text-outline">hoặc</span>
+                <div class="flex-grow border-t border-outline-variant"></div>
+            </div>
+            <!-- Registration Redirect -->
+            <div class="text-center">
+                <p class="font-body-md text-body-md text-on-surface-variant">
+                    Chưa có tài khoản?
+                    <a class="text-secondary font-bold hover:underline transition-all ml-1" href="#">Đăng ký ngay</a>
+                </p>
+            </div>
+        </div>
+        <!-- Decorative Floating Elements -->
+        <div class="hidden lg:block absolute left-20 bottom-20 animate-bounce duration-[3000ms]">
+            <img class="w-32 h-32 opacity-20" data-alt="A high-quality 3D render of a single open book with glowing pages, floating in a clean, minimalist space. The aesthetic follows a premium bookstore theme with soft shadows and deep blue accents. Professional studio lighting emphasizes the texture of the paper and the elegant binding." src="https://lh3.googleusercontent.com/aida-public/AB6AXuBiH5EmLGxS0BloJzD2_Azf-dK3hBw7bG2PRR9vTLXX7vo43DSXsJcWyQu5DNx8RlXavKbuKPNfL5fsrA4XTkXXYnRHPRwyC59yS7evVwUnnO9RxKvT5KHt7oZAwGtY52JTWlJCpsfMkhjZ6e3nGu5cpNIf6XSObP7ZIi-Plq8Fd5eAEyqi-EeNeyU5ew95f1xPzlEushozB6jL4L6fUHjSHfUUDlOkvF-aNNSDuUAgpLNzTnAwotQd" />
+        </div>
+        <div class="hidden lg:block absolute right-24 top-24 animate-pulse">
+            <img class="w-40 h-40 opacity-20" data-alt="A minimalist stack of hardcover books rendered in a 3D aesthetic. The books use a sophisticated palette of deep navy and emerald green. The lighting is soft and diffused, creating a calm and intellectual atmosphere that complements a professional management UI." src="https://lh3.googleusercontent.com/aida-public/AB6AXuBCHaZ8OGeUpFbByjpDXNufixTzbPJ0eUYPQwgtOrPPNSEFUhUq-VUDKoJ7LAxtHNh8xW7DbCLKlEdWMJjPvKvODuC4pqC-vXhvQbED57fwvs07UulRrWH9guE8zRifGLhMG57vqyk6G4LruWFe6hi7WFYaq8AQmXCxfSfF3GKxF0zp_aEi4Qri2pD1KTTEADfhrk6ZKufhtRomQscpdQ4D_1gFEy7Tpz7lqrvNh4DTiP2F16H3E4IN" />
+        </div>
+    </main>
+    <!-- Simple Footer (Suppressed based on "Transactional" rule, but included minimal copyright for legal compliance) -->
+    <footer class="py-6 text-center">
+        <p class="font-label-md text-label-md text-outline">© 2024 Tiệm Sách Trí Tuệ. All rights reserved.</p>
+    </footer>
+    <script>
+        // Password Visibility Toggle Logic
+        const togglePassword = document.querySelector('#togglePassword');
+        const passwordInput = document.querySelector('#password');
+        const eyeIcon = document.querySelector('#eyeIcon');
+
+        togglePassword.addEventListener('click', function (e) {
+            const type = passwordInput.getAttribute('type') === 'password' ? 'text' : 'password';
+            passwordInput.setAttribute('type', type);
+            eyeIcon.textContent = type === 'password' ? 'visibility' : 'visibility_off';
+        });
+
+        // Form Submit Interaction
+        const loginForm = document.querySelector('form');
+        loginForm.addEventListener('submit', (e) => {
+            // Placeholder for real login logic
+            const submitBtn = loginForm.querySelector('button[type="submit"]');
+            submitBtn.disabled = true;
+            submitBtn.innerHTML = '<span class="material-symbols-outlined animate-spin">progress_activity</span>';
+        });
+
+        // Subtle parallax effect on background elements
+        document.addEventListener('mousemove', (e) => {
+            const x = e.clientX / window.innerWidth;
+            const y = e.clientY / window.innerHeight;
+            const mesh = document.querySelector('.login-mesh-bg');
+            if (mesh) {
+                mesh.style.transform = `translate(${x * 10}px, ${y * 10}px)`;
+            }
+        });
+    </script>
+</body>
+</html>

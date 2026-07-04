@@ -1,0 +1,239 @@
+@model BookVerse.Models.ViewModels.Admin.UserListViewModel
+@{
+    Layout = "_AdminLayout";
+    ViewData["Title"] = "Quản lý người dùng";
+    ViewData["ActiveMenu"] = "Users";
+    var currentUserId = int.Parse(User.FindFirst("UserId")?.Value ?? "0");
+}
+
+<div class="page-header">
+    <div class="page-header-left">
+        <h1><i class="bi bi-people me-2 text-accent"></i>Quản lý người dùng</h1>
+        <p>Tổng cộng <strong class="text-accent">@Model.TotalCount</strong> tài khoản</p>
+    </div>
+</div>
+
+<div id="alertContainer"></div>
+
+<div class="admin-card">
+    <!-- Filter Bar -->
+    <form method="get" action="/Admin/Users">
+        <div class="filter-bar">
+            <div class="search-input-wrapper">
+                <i class="bi bi-search"></i>
+                <input type="text" name="search" class="form-control search-input"
+                       placeholder="Tìm theo tên, email..."
+                       value="@Model.SearchTerm" />
+            </div>
+
+            <select name="roleId" class="form-select" style="max-width:160px"
+                    onchange="this.form.submit()">
+                <option value="">Tất cả vai trò</option>
+                @foreach (var role in Model.Roles)
+                {
+                    <option value="@role.RoleId" selected="@(Model.FilterRoleId == role.RoleId)">@role.RoleName</option>
+                }
+            </select>
+
+            <select name="isActive" class="form-select" style="max-width:160px"
+                    onchange="this.form.submit()">
+                <option value="">Tất cả trạng thái</option>
+                <option value="true" selected="@(Model.FilterIsActive == true)">Hoạt động</option>
+                <option value="false" selected="@(Model.FilterIsActive == false)">Đã khóa</option>
+            </select>
+
+            <button type="submit" class="btn btn-secondary btn-sm"><i class="bi bi-funnel"></i> Lọc</button>
+
+            @if (!string.IsNullOrEmpty(Model.SearchTerm) || Model.FilterRoleId.HasValue || Model.FilterIsActive.HasValue)
+            {
+                <a href="/Admin/Users" class="btn btn-sm" style="background:rgba(255,255,255,0.05);color:var(--color-text-muted)">
+                    <i class="bi bi-x"></i> Xóa lọc
+                </a>
+            }
+        </div>
+    </form>
+
+    <div class="admin-table-wrapper">
+        <table class="admin-table">
+            <thead>
+                <tr>
+                    <th>Người dùng</th>
+                    <th>Email</th>
+                    <th>SĐT</th>
+                    <th>Vai trò</th>
+                    <th>Ngày đăng ký</th>
+                    <th>Trạng thái</th>
+                    <th style="width:80px">Thao tác</th>
+                </tr>
+            </thead>
+            <tbody>
+                @if (!Model.Users.Any())
+                {
+                    <tr>
+                        <td colspan="7" class="text-center py-5">
+                            <i class="bi bi-people" style="font-size:2rem;color:var(--color-text-muted);display:block;margin-bottom:0.75rem"></i>
+                            <span class="text-muted">Không tìm thấy người dùng nào</span>
+                        </td>
+                    </tr>
+                }
+                @foreach (var user in Model.Users)
+                {
+                    var isCurrentUser = user.UserId == currentUserId;
+                    var isAdmin = user.RoleName == "Admin";
+                    var canLock = !isCurrentUser && !isAdmin;
+                    <tr id="user-row-@user.UserId">
+                        <td>
+                            <div style="display:flex;align-items:center;gap:0.75rem">
+                                <div class="user-avatar">@(user.FullName?.FirstOrDefault().ToString().ToUpper() ?? "U")</div>
+                                <div>
+                                    <div class="fw-600" style="color:var(--color-text-primary)">@user.FullName</div>
+                                    @if (isCurrentUser)
+                                    {
+                                        <span class="badge badge-success" style="font-size:0.7rem">Bạn</span>
+                                    }
+                                </div>
+                            </div>
+                        </td>
+                        <td>@user.Email</td>
+                        <td>@(user.Phone ?? "—")</td>
+                        <td>
+                            @if (isAdmin)
+                            {
+                                <span class="badge" style="background:rgba(233,69,96,0.15);color:var(--color-accent)">
+                                    <i class="bi bi-shield-fill me-1"></i>Admin
+                                </span>
+                            }
+                            else
+                            {
+                                <span class="badge badge-info">@user.RoleName</span>
+                            }
+                        </td>
+                        <td>@user.CreatedAt?.ToString("dd/MM/yyyy")</td>
+                        <td>
+                            @if (user.IsActive == true)
+                            {
+                                <span class="status-badge status-da-giao">Hoạt động</span>
+                            }
+                            else
+                            {
+                                <span class="status-badge status-da-huy">Đã khóa</span>
+                            }
+                        </td>
+                        <td>
+                            @if (canLock)
+                            {
+                                <button type="button"
+                                        class="btn-action @(user.IsActive == true ? "btn-action-delete" : "btn-action-approve")"
+                                        id="lock-btn-@user.UserId"
+                                        title="@(user.IsActive == true ? "Khóa tài khoản" : "Mở khóa")"
+                                        onclick="confirmToggleLock(@user.UserId, '@(user.FullName?.Replace("'", "\\'"))', @(user.IsActive == true ? "true" : "false"))">
+                                    <i class="bi bi-@(user.IsActive == true ? "lock" : "unlock")"></i>
+                                </button>
+                            }
+                            else
+                            {
+                                <button type="button" class="btn-action" disabled
+                                        style="opacity:0.3;cursor:not-allowed;background:rgba(255,255,255,0.05);color:var(--color-text-muted)"
+                                        title="@(isCurrentUser ? "Không thể khóa chính mình" : "Không thể khóa admin khác")">
+                                    <i class="bi bi-shield-lock"></i>
+                                </button>
+                            }
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+
+    @if (Model.TotalPages > 1)
+    {
+        <div class="admin-pagination">
+            <div class="pagination-info">
+                Hiển thị @((Model.CurrentPage - 1) * Model.PageSize + 1)–@(Math.Min(Model.CurrentPage * Model.PageSize, Model.TotalCount)) trong @Model.TotalCount kết quả
+            </div>
+            <div class="pagination-links">
+                @if (Model.CurrentPage > 1)
+                {
+                    <a href="?search=@Model.SearchTerm&roleId=@Model.FilterRoleId&isActive=@Model.FilterIsActive&page=@(Model.CurrentPage - 1)" class="page-btn"><i class="bi bi-chevron-left"></i></a>
+                }
+                @for (int i = Math.Max(1, Model.CurrentPage - 2); i <= Math.Min(Model.TotalPages, Model.CurrentPage + 2); i++)
+                {
+                    <a href="?search=@Model.SearchTerm&roleId=@Model.FilterRoleId&isActive=@Model.FilterIsActive&page=@i"
+                       class="page-btn @(i == Model.CurrentPage ? "active" : "")">@i</a>
+                }
+                @if (Model.CurrentPage < Model.TotalPages)
+                {
+                    <a href="?search=@Model.SearchTerm&roleId=@Model.FilterRoleId&isActive=@Model.FilterIsActive&page=@(Model.CurrentPage + 1)" class="page-btn"><i class="bi bi-chevron-right"></i></a>
+                }
+            </div>
+        </div>
+    }
+</div>
+
+<!-- Confirm Modal -->
+<div class="modal fade admin-modal" id="lockModal" tabindex="-1">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="lockModalTitle">Xác nhận</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body"><p id="lockMessage"></p></div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary btn-sm" data-bs-dismiss="modal">Hủy</button>
+                <button type="button" class="btn btn-primary btn-sm" id="confirmLockBtn">Xác nhận</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+<script>
+    let lockModal;
+    document.addEventListener('DOMContentLoaded', () => {
+        lockModal = new bootstrap.Modal(document.getElementById('lockModal'));
+    });
+
+    function showAlert(msg, type='success') {
+        const el = document.getElementById('alertContainer');
+        const icon = type === 'success' ? 'check-circle-fill' : 'x-circle-fill';
+        el.innerHTML = `<div class="alert alert-${type} mb-4 fade-in"><i class="bi bi-${icon}"></i><span>${msg}</span></div>`;
+        setTimeout(() => el.innerHTML = '', 4000);
+    }
+
+    function confirmToggleLock(userId, name, isCurrentlyActive) {
+        const modal = document.getElementById('lockModal');
+        const title = document.getElementById('lockModalTitle');
+        const msg = document.getElementById('lockMessage');
+        const confirmBtn = document.getElementById('confirmLockBtn');
+
+        if (isCurrentlyActive) {
+            title.innerHTML = '<i class="bi bi-lock me-2 text-accent"></i>Khóa tài khoản';
+            msg.innerHTML = `Bạn có chắc muốn <strong>khóa</strong> tài khoản <strong>"${name}"</strong>?<br><span class="text-muted" style="font-size:0.875rem">Người dùng sẽ không thể đăng nhập.</span>`;
+        } else {
+            title.innerHTML = '<i class="bi bi-unlock me-2 text-accent"></i>Mở khóa tài khoản';
+            msg.innerHTML = `Bạn có chắc muốn <strong>mở khóa</strong> tài khoản <strong>"${name}"</strong>?`;
+        }
+
+        confirmBtn.onclick = async () => {
+            confirmBtn.disabled = true;
+            confirmBtn.innerHTML = '<span class="spinner-border spinner-border-sm me-1"></span>Đang xử lý...';
+
+            const resp = await fetch(`/Admin/Users/ToggleLock?id=${userId}`, { method: 'POST' });
+            const json = await resp.json();
+            lockModal.hide();
+
+            if (json.success) {
+                showAlert(json.message);
+                setTimeout(() => location.reload(), 1000);
+            } else {
+                showAlert(json.message, 'danger');
+            }
+            confirmBtn.disabled = false;
+            confirmBtn.innerHTML = 'Xác nhận';
+        };
+
+        lockModal.show();
+    }
+</script>
+}

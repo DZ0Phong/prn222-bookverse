@@ -1,0 +1,258 @@
+@model BookVerse.Models.ViewModels.Admin.OrderDetailViewModel
+@{
+    Layout = "_AdminLayout";
+    ViewData["Title"] = $"Chi tiết đơn #{Model.OrderId}";
+    ViewData["ActiveMenu"] = "Orders";
+    string FormatCurrency(decimal p) => p.ToString("N0") + " ₫";
+    var statusClass = Model.Status switch
+    {
+        "Chờ xử lý" => "status-cho-xu-ly",
+        "Đang giao" => "status-dang-giao",
+        "Đã giao" => "status-da-giao",
+        "Đã hủy" => "status-da-huy",
+        _ => "status-cho-xu-ly"
+    };
+    bool canUpdate = Model.Status != "Đã giao" && Model.Status != "Đã hủy";
+}
+
+<div class="page-header">
+    <div class="page-header-left">
+        <h1><i class="bi bi-receipt me-2 text-accent"></i>Chi tiết đơn hàng <span class="text-accent">#@Model.OrderId</span></h1>
+        <p>Đặt lúc @Model.CreatedAt?.ToString("HH:mm, dd/MM/yyyy")</p>
+    </div>
+    <div style="display:flex;gap:0.75rem;align-items:center">
+        <span class="status-badge @statusClass" style="font-size:0.9rem;padding:0.35rem 1rem">@Model.Status</span>
+        <a href="/Admin/Orders" class="btn btn-secondary btn-sm"><i class="bi bi-arrow-left"></i> Danh sách</a>
+    </div>
+</div>
+
+<div id="statusAlert"></div>
+
+<div class="row g-4">
+    <!-- Left: Customer + Items -->
+    <div class="col-lg-8">
+
+        <!-- Customer Info -->
+        <div class="admin-card mb-4">
+            <div class="admin-card-header">
+                <h3 class="admin-card-title"><i class="bi bi-person-circle"></i>Thông tin khách hàng</h3>
+            </div>
+            <div class="admin-card-body">
+                <div class="row g-3">
+                    <div class="col-sm-6">
+                        <label class="form-label">Họ tên</label>
+                        <div class="fw-600" style="color:var(--color-text-primary)">@Model.CustomerName</div>
+                    </div>
+                    <div class="col-sm-6">
+                        <label class="form-label">Email</label>
+                        <div>@Model.CustomerEmail</div>
+                    </div>
+                    <div class="col-sm-6">
+                        <label class="form-label">SĐT khách</label>
+                        <div>@(Model.CustomerPhone ?? "—")</div>
+                    </div>
+                    <div class="col-sm-6">
+                        <label class="form-label">SĐT nhận hàng</label>
+                        <div>@(Model.PhoneNumber ?? "—")</div>
+                    </div>
+                    <div class="col-12">
+                        <label class="form-label">Địa chỉ giao hàng</label>
+                        <div class="fw-500" style="color:var(--color-text-primary)">
+                            <i class="bi bi-geo-alt text-accent me-1"></i>@(Model.ShippingAddress ?? "Chưa có địa chỉ")
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Order Items -->
+        <div class="admin-card">
+            <div class="admin-card-header">
+                <h3 class="admin-card-title"><i class="bi bi-bag"></i>Sản phẩm trong đơn</h3>
+            </div>
+            <div class="admin-table-wrapper">
+                <table class="admin-table">
+                    <thead>
+                        <tr>
+                            <th colspan="2">Sách</th>
+                            <th>Đơn giá</th>
+                            <th>SL</th>
+                            <th class="text-end">Thành tiền</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var item in Model.Items)
+                        {
+                            <tr>
+                                <td style="width:60px">
+                                    @if (!string.IsNullOrEmpty(item.BookImage))
+                                    {
+                                        <img src="@item.BookImage" alt="@item.BookTitle" class="book-thumb" />
+                                    }
+                                    else
+                                    {
+                                        <div class="book-thumb-placeholder"><i class="bi bi-book"></i></div>
+                                    }
+                                </td>
+                                <td>
+                                    <div class="fw-600" style="color:var(--color-text-primary)">@item.BookTitle</div>
+                                    <div style="font-size:0.8rem;color:var(--color-text-muted)">@item.BookAuthor</div>
+                                </td>
+                                <td>@FormatCurrency(item.UnitPrice)</td>
+                                <td>×@item.Quantity</td>
+                                <td class="text-end fw-600 text-gold">@FormatCurrency(item.Subtotal)</td>
+                            </tr>
+                        }
+                    </tbody>
+                    <tfoot>
+                        <tr>
+                            <td colspan="4" class="text-end fw-600" style="color:var(--color-text-primary)">Tổng cộng:</td>
+                            <td class="text-end fw-700 text-accent" style="font-size:1.125rem">@FormatCurrency(Model.TotalAmount)</td>
+                        </tr>
+                    </tfoot>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <!-- Right: Order Info + Status Update -->
+    <div class="col-lg-4">
+
+        <!-- Order Summary -->
+        <div class="admin-card mb-4">
+            <div class="admin-card-header">
+                <h3 class="admin-card-title"><i class="bi bi-info-circle"></i>Thông tin đơn hàng</h3>
+            </div>
+            <div class="admin-card-body">
+                <div class="mb-3">
+                    <label class="form-label">Phương thức thanh toán</label>
+                    <div class="fw-600" style="color:var(--color-text-primary)">
+                        @(Model.PaymentMethod == "COD" ? "💵 Thanh toán khi nhận hàng (COD)" : $"💳 {Model.PaymentMethod}")
+                    </div>
+                </div>
+
+                <div class="mb-3">
+                    <label class="form-label">Trạng thái thanh toán</label>
+                    @{
+                        var payClass = (Model.PaymentStatus?.Contains("Đã") == true) ? "payment-da" : "payment-chua";
+                    }
+                    <div><span class="status-badge @payClass">@Model.PaymentStatus</span></div>
+                </div>
+
+                @if (!string.IsNullOrEmpty(Model.VoucherCode))
+                {
+                    <div class="mb-3">
+                        <label class="form-label">Voucher áp dụng</label>
+                        <div>
+                            <span class="badge badge-success"><i class="bi bi-tag me-1"></i>@Model.VoucherCode</span>
+                        </div>
+                    </div>
+                }
+
+                <hr style="border-color:var(--color-border);margin:1rem 0" />
+
+                <div class="d-flex justify-content-between align-items-center">
+                    <span class="fw-600" style="color:var(--color-text-primary)">Tổng tiền</span>
+                    <span class="fw-800 text-accent" style="font-size:1.25rem">@FormatCurrency(Model.TotalAmount)</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Update Status -->
+        @if (canUpdate)
+        {
+            <div class="admin-card">
+                <div class="admin-card-header">
+                    <h3 class="admin-card-title"><i class="bi bi-arrow-repeat"></i>Cập nhật trạng thái</h3>
+                </div>
+                <div class="admin-card-body">
+                    <div class="mb-3">
+                        <label class="form-label">Trạng thái mới</label>
+                        <select id="newStatus" class="form-select">
+                            @foreach (var s in Model.AllowedStatuses)
+                            {
+                                <option value="@s" selected="@(s == Model.Status)">@s</option>
+                            }
+                        </select>
+                    </div>
+                    <button class="btn btn-primary w-100" onclick="updateStatus()">
+                        <i class="bi bi-check-lg me-1"></i>Cập nhật trạng thái
+                    </button>
+                </div>
+            </div>
+        }
+        else
+        {
+            <div class="admin-card">
+                <div class="admin-card-body text-center">
+                    <i class="bi bi-lock-fill text-muted" style="font-size:1.5rem;display:block;margin-bottom:0.5rem"></i>
+                    <p class="text-muted mb-0" style="font-size:0.875rem">Đơn hàng đã ở trạng thái cuối — không thể thay đổi</p>
+                </div>
+            </div>
+        }
+
+        <!-- Timeline placeholder -->
+        <div class="admin-card mt-4">
+            <div class="admin-card-header">
+                <h3 class="admin-card-title"><i class="bi bi-clock-history"></i>Lịch sử trạng thái</h3>
+            </div>
+            <div class="admin-card-body">
+                <div class="order-timeline">
+                    <div class="timeline-item">
+                        <div class="timeline-dot completed"></div>
+                        <div class="timeline-time">@Model.CreatedAt?.ToString("dd/MM/yyyy HH:mm")</div>
+                        <div class="timeline-label">Đơn hàng được tạo</div>
+                    </div>
+                    @if (Model.Status == "Đang giao" || Model.Status == "Đã giao")
+                    {
+                        <div class="timeline-item">
+                            <div class="timeline-dot completed"></div>
+                            <div class="timeline-time">—</div>
+                            <div class="timeline-label">Đang giao hàng</div>
+                        </div>
+                    }
+                    @if (Model.Status == "Đã giao")
+                    {
+                        <div class="timeline-item">
+                            <div class="timeline-dot completed"></div>
+                            <div class="timeline-time">—</div>
+                            <div class="timeline-label">Giao hàng thành công</div>
+                        </div>
+                    }
+                    @if (Model.Status == "Đã hủy")
+                    {
+                        <div class="timeline-item">
+                            <div class="timeline-dot cancelled"></div>
+                            <div class="timeline-time">—</div>
+                            <div class="timeline-label">Đơn hàng đã hủy</div>
+                        </div>
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+<script>
+    async function updateStatus() {
+        const newStatus = document.getElementById('newStatus').value;
+        const alertEl = document.getElementById('statusAlert');
+
+        const resp = await fetch(`/Admin/Orders/UpdateStatus`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+            body: `id=@Model.OrderId&newStatus=${encodeURIComponent(newStatus)}`
+        });
+        const json = await resp.json();
+
+        if (json.success) {
+            alertEl.innerHTML = `<div class="alert alert-success mb-4 fade-in"><i class="bi bi-check-circle-fill"></i><span>${json.message}</span></div>`;
+            setTimeout(() => location.reload(), 1200);
+        } else {
+            alertEl.innerHTML = `<div class="alert alert-danger mb-4 fade-in"><i class="bi bi-x-circle-fill"></i><span>${json.message}</span></div>`;
+        }
+        setTimeout(() => { alertEl.innerHTML = ''; }, 5000);
+    }
+</script>
+}

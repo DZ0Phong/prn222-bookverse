@@ -1,0 +1,236 @@
+@model List<BookVerse.Models.Review>
+@{
+    Layout = "_AdminLayout";
+    ViewData["Title"] = "Quản lý đánh giá";
+    ViewData["ActiveMenu"] = "Reviews";
+    bool? isApproved = ViewBag.IsApproved;
+    int? rating = ViewBag.Rating;
+    int currentPage = ViewBag.CurrentPage;
+    int totalPages = ViewBag.TotalPages;
+    int totalCount = ViewBag.TotalCount;
+    int pageSize = ViewBag.PageSize;
+}
+
+<div class="page-header">
+    <div class="page-header-left">
+        <h1><i class="bi bi-star me-2 text-accent"></i>Quản lý đánh giá</h1>
+        <p>Tổng cộng <strong class="text-accent">@totalCount</strong> đánh giá</p>
+    </div>
+</div>
+
+<div id="alertContainer"></div>
+
+<div class="admin-card">
+    <!-- Filter Bar -->
+    <form method="get" action="/Admin/Reviews">
+        <div class="filter-bar">
+            <select name="isApproved" class="form-select" style="max-width:180px"
+                    onchange="this.form.submit()">
+                <option value="">Tất cả trạng thái</option>
+                <option value="true" selected="@(isApproved == true)">Đã duyệt</option>
+                <option value="false" selected="@(isApproved == false)">Chờ duyệt</option>
+            </select>
+
+            <select name="rating" class="form-select" style="max-width:160px"
+                    onchange="this.form.submit()">
+                <option value="">Tất cả số sao</option>
+                @for (int s = 5; s >= 1; s--)
+                {
+                    <option value="@s" selected="@(rating == s)">@s ⭐</option>
+                }
+            </select>
+
+            @if (isApproved.HasValue || rating.HasValue)
+            {
+                <a href="/Admin/Reviews" class="btn btn-sm" style="background:rgba(255,255,255,0.05);color:var(--color-text-muted)">
+                    <i class="bi bi-x"></i> Xóa lọc
+                </a>
+            }
+        </div>
+    </form>
+
+    <div class="admin-table-wrapper">
+        <table class="admin-table">
+            <thead>
+                <tr>
+                    <th>Sách</th>
+                    <th>Người đánh giá</th>
+                    <th style="width:100px">Số sao</th>
+                    <th>Nội dung</th>
+                    <th>Ngày</th>
+                    <th>Trạng thái</th>
+                    <th style="width:100px">Thao tác</th>
+                </tr>
+            </thead>
+            <tbody>
+                @if (!Model.Any())
+                {
+                    <tr>
+                        <td colspan="7" class="text-center py-5">
+                            <i class="bi bi-star" style="font-size:2rem;color:var(--color-text-muted);display:block;margin-bottom:0.75rem"></i>
+                            <span class="text-muted">Không có đánh giá nào</span>
+                        </td>
+                    </tr>
+                }
+                @foreach (var review in Model)
+                {
+                    <tr id="review-row-@review.ReviewId">
+                        <td>
+                            <div style="display:flex;align-items:center;gap:0.625rem">
+                                @if (!string.IsNullOrEmpty(review.Book?.Image))
+                                {
+                                    <img src="@review.Book.Image" alt="" class="book-thumb" />
+                                }
+                                else
+                                {
+                                    <div class="book-thumb-placeholder"><i class="bi bi-book"></i></div>
+                                }
+                                <span class="fw-500" style="color:var(--color-text-primary);max-width:160px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap" title="@review.Book?.Title">
+                                    @review.Book?.Title
+                                </span>
+                            </div>
+                        </td>
+                        <td>
+                            <div class="fw-500" style="color:var(--color-text-primary)">@review.User?.FullName</div>
+                            <div style="font-size:0.8rem;color:var(--color-text-muted)">@review.User?.Email</div>
+                        </td>
+                        <td>
+                            <div class="stars">
+                                @for (int s = 1; s <= 5; s++)
+                                {
+                                    <i class="bi bi-star-fill @(s <= (review.Rating ?? 0) ? "" : "empty")"></i>
+                                }
+                            </div>
+                            <div style="font-size:0.8rem;color:var(--color-text-muted)">@review.Rating/5</div>
+                        </td>
+                        <td>
+                            <span title="@review.Comment" style="max-width:220px;display:inline-block;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">
+                                @review.Comment
+                            </span>
+                        </td>
+                        <td>@review.CreatedAt?.ToString("dd/MM/yyyy")</td>
+                        <td>
+                            @if (review.IsApproved == true)
+                            {
+                                <span class="status-badge status-da-giao">Đã duyệt</span>
+                            }
+                            else
+                            {
+                                <span class="status-badge status-cho-xu-ly">Chờ duyệt</span>
+                            }
+                        </td>
+                        <td>
+                            <div class="table-actions">
+                                @if (review.IsApproved != true)
+                                {
+                                    <button type="button" class="btn-action btn-action-approve"
+                                            title="Duyệt đánh giá"
+                                            onclick="approveReview(@review.ReviewId)">
+                                        <i class="bi bi-check-lg"></i>
+                                    </button>
+                                }
+                                <button type="button" class="btn-action btn-action-delete"
+                                        title="Xóa đánh giá"
+                                        onclick="confirmDelete(@review.ReviewId, '@(review.User?.FullName?.Replace("'", "\\'"))')">
+                                    <i class="bi bi-trash"></i>
+                                </button>
+                            </div>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+
+    @if (totalPages > 1)
+    {
+        <div class="admin-pagination">
+            <div class="pagination-info">
+                Hiển thị @((currentPage - 1) * pageSize + 1)–@(Math.Min(currentPage * pageSize, totalCount)) trong @totalCount kết quả
+            </div>
+            <div class="pagination-links">
+                @if (currentPage > 1)
+                {
+                    <a href="?isApproved=@isApproved&rating=@rating&page=@(currentPage - 1)" class="page-btn"><i class="bi bi-chevron-left"></i></a>
+                }
+                @for (int i = Math.Max(1, currentPage - 2); i <= Math.Min(totalPages, currentPage + 2); i++)
+                {
+                    <a href="?isApproved=@isApproved&rating=@rating&page=@i"
+                       class="page-btn @(i == currentPage ? "active" : "")">@i</a>
+                }
+                @if (currentPage < totalPages)
+                {
+                    <a href="?isApproved=@isApproved&rating=@rating&page=@(currentPage + 1)" class="page-btn"><i class="bi bi-chevron-right"></i></a>
+                }
+            </div>
+        </div>
+    }
+</div>
+
+<!-- Delete Modal -->
+<div class="modal fade admin-modal" id="deleteModal" tabindex="-1">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title"><i class="bi bi-trash me-2 text-accent"></i>Xóa đánh giá</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body"><p id="deleteMsg"></p></div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary btn-sm" data-bs-dismiss="modal">Hủy</button>
+                <button type="button" class="btn btn-primary btn-sm" id="confirmDeleteBtn">Xóa</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+<script>
+    let deleteModal;
+    document.addEventListener('DOMContentLoaded', () => {
+        deleteModal = new bootstrap.Modal(document.getElementById('deleteModal'));
+    });
+
+    function showAlert(msg, type='success') {
+        const el = document.getElementById('alertContainer');
+        const icon = type === 'success' ? 'check-circle-fill' : 'x-circle-fill';
+        el.innerHTML = `<div class="alert alert-${type} mb-4 fade-in"><i class="bi bi-${icon}"></i><span>${msg}</span></div>`;
+        setTimeout(() => el.innerHTML = '', 4000);
+    }
+
+    async function approveReview(id) {
+        const resp = await fetch(`/Admin/Reviews/Approve?id=${id}`, { method: 'POST' });
+        const json = await resp.json();
+        if (json.success) {
+            showAlert(json.message);
+            const row = document.getElementById(`review-row-${id}`);
+            if (row) {
+                row.querySelector('td:nth-child(6)').innerHTML = '<span class="status-badge status-da-giao">Đã duyệt</span>';
+                const approveBtn = row.querySelector('.btn-action-approve');
+                if (approveBtn) approveBtn.remove();
+            }
+        } else {
+            showAlert(json.message, 'danger');
+        }
+    }
+
+    function confirmDelete(id, reviewer) {
+        document.getElementById('deleteMsg').innerHTML = `Xóa đánh giá của <strong>${reviewer}</strong>?`;
+        const confirmBtn = document.getElementById('confirmDeleteBtn');
+        confirmBtn.onclick = async () => {
+            confirmBtn.disabled = true;
+            const resp = await fetch(`/Admin/Reviews/Delete?id=${id}`, { method: 'POST' });
+            const json = await resp.json();
+            deleteModal.hide();
+            if (json.success) {
+                document.getElementById(`review-row-${id}`)?.remove();
+                showAlert(json.message);
+            } else {
+                showAlert(json.message, 'danger');
+            }
+            confirmBtn.disabled = false;
+        };
+        deleteModal.show();
+    }
+</script>
+}

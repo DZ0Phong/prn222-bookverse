@@ -1,0 +1,217 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"] - BookVerse Admin</title>
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" />
+    <!-- Bootstrap Icons -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" />
+    <!-- Design System -->
+    <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
+    <!-- Admin CSS -->
+    <link rel="stylesheet" href="~/css/admin.css" asp-append-version="true" />
+    @await RenderSectionAsync("Styles", required: false)
+</head>
+<body>
+<div class="admin-wrapper">
+
+    <!-- ===== SIDEBAR ===== -->
+    <aside class="admin-sidebar" id="adminSidebar">
+
+        <!-- Brand -->
+        <a href="/Admin/Dashboard" class="sidebar-brand">
+            <div class="sidebar-brand-logo">
+                <i class="bi bi-book-half"></i>
+            </div>
+            <div class="sidebar-brand-text">
+                <span class="sidebar-brand-name">BookVerse</span>
+                <span class="sidebar-brand-subtitle">Admin Panel</span>
+            </div>
+        </a>
+
+        <!-- Navigation -->
+        <nav class="sidebar-nav">
+            <div class="nav-section-label">Tổng quan</div>
+            <div class="nav-item">
+                <a href="/Admin/Dashboard" class="nav-link-admin @(ViewData["ActiveMenu"]?.ToString() == "Dashboard" ? "active" : "")">
+                    <i class="bi bi-speedometer2 nav-link-icon"></i>
+                    <span class="nav-link-text">Tổng quan</span>
+                </a>
+            </div>
+
+            <div class="nav-item-divider"></div>
+            <div class="nav-section-label">Quản lý</div>
+
+            <div class="nav-item">
+                <a href="/Admin/Books" class="nav-link-admin @(ViewData["ActiveMenu"]?.ToString() == "Books" ? "active" : "")">
+                    <i class="bi bi-book nav-link-icon"></i>
+                    <span class="nav-link-text">Quản lý sách</span>
+                </a>
+            </div>
+            <div class="nav-item">
+                <a href="/Admin/Categories" class="nav-link-admin @(ViewData["ActiveMenu"]?.ToString() == "Categories" ? "active" : "")">
+                    <i class="bi bi-grid nav-link-icon"></i>
+                    <span class="nav-link-text">Danh mục</span>
+                </a>
+            </div>
+            <div class="nav-item">
+                <a href="/Admin/Orders" class="nav-link-admin @(ViewData["ActiveMenu"]?.ToString() == "Orders" ? "active" : "")">
+                    <i class="bi bi-cart3 nav-link-icon"></i>
+                    <span class="nav-link-text">Đơn hàng</span>
+                </a>
+            </div>
+            <div class="nav-item">
+                <a href="/Admin/Users" class="nav-link-admin @(ViewData["ActiveMenu"]?.ToString() == "Users" ? "active" : "")">
+                    <i class="bi bi-people nav-link-icon"></i>
+                    <span class="nav-link-text">Người dùng</span>
+                </a>
+            </div>
+            <div class="nav-item">
+                <a href="/Admin/Reviews" class="nav-link-admin @(ViewData["ActiveMenu"]?.ToString() == "Reviews" ? "active" : "")">
+                    <i class="bi bi-star nav-link-icon"></i>
+                    <span class="nav-link-text">Đánh giá</span>
+                </a>
+            </div>
+            <div class="nav-item">
+                <a href="/Admin/Vouchers" class="nav-link-admin @(ViewData["ActiveMenu"]?.ToString() == "Vouchers" ? "active" : "")">
+                    <i class="bi bi-tag nav-link-icon"></i>
+                    <span class="nav-link-text">Voucher</span>
+                </a>
+            </div>
+
+            <div class="nav-item-divider"></div>
+            <div class="nav-section-label">Phân tích</div>
+
+            <div class="nav-item">
+                <a href="/Admin/Reports" class="nav-link-admin @(ViewData["ActiveMenu"]?.ToString() == "Reports" ? "active" : "")">
+                    <i class="bi bi-bar-chart-line nav-link-icon"></i>
+                    <span class="nav-link-text">Thống kê & báo cáo</span>
+                </a>
+            </div>
+        </nav>
+
+        <!-- Sidebar Footer: Logout -->
+        <div class="sidebar-footer">
+            <form method="post" action="/Account/Logout" id="sidebarLogoutForm">
+                @Html.AntiForgeryToken()
+                <button type="button"
+                        class="nav-link-admin w-100 text-start"
+                        onclick="if(confirm('Bạn có chắc muốn đăng xuất?')) document.getElementById('sidebarLogoutForm').submit()">
+                    <i class="bi bi-box-arrow-left nav-link-icon" style="color: var(--color-accent)"></i>
+                    <span class="nav-link-text" style="color: var(--color-accent)">Đăng xuất</span>
+                </button>
+            </form>
+        </div>
+    </aside>
+
+    <!-- ===== MAIN AREA ===== -->
+    <div class="admin-main" id="adminMain">
+
+        <!-- Topbar -->
+        <header class="admin-topbar">
+            <button class="topbar-toggle" id="sidebarToggle" title="Thu gọn sidebar">
+                <i class="bi bi-list"></i>
+            </button>
+
+            <div class="topbar-breadcrumb">
+                <div class="topbar-page-title">@ViewData["Title"]</div>
+                <div class="topbar-page-sub">BookVerse &rsaquo; @ViewData["Title"]</div>
+            </div>
+
+            <div class="topbar-actions">
+                <!-- Notification -->
+                <button class="topbar-notification" title="Thông báo">
+                    <i class="bi bi-bell"></i>
+                    <span class="notification-badge"></span>
+                </button>
+
+                <!-- Admin User -->
+                <div class="topbar-user">
+                    <div class="topbar-avatar">
+                        @{
+                            var adminName = User.Identity?.Name ?? "A";
+                            var initials = adminName.Length > 0 ? adminName[0].ToString().ToUpper() : "A";
+                        }
+                        @initials
+                    </div>
+                    <div class="topbar-user-info">
+                        <span class="topbar-user-name">@(User.Identity?.Name ?? "Admin")</span>
+                        <span class="topbar-user-role">Quản trị viên</span>
+                    </div>
+                </div>
+            </div>
+        </header>
+
+        <!-- Content -->
+        <main class="admin-content fade-in">
+            @RenderBody()
+        </main>
+    </div>
+
+    <!-- Mobile overlay -->
+    <div class="sidebar-overlay" id="sidebarOverlay"></div>
+</div>
+
+<!-- Bootstrap JS -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+
+<!-- Sidebar toggle script -->
+<script>
+    const sidebar = document.getElementById('adminSidebar');
+    const mainArea = document.getElementById('adminMain');
+    const toggleBtn = document.getElementById('sidebarToggle');
+    const overlay = document.getElementById('sidebarOverlay');
+    let isCollapsed = localStorage.getItem('sidebarCollapsed') === 'true';
+
+    function applySidebarState() {
+        if (window.innerWidth <= 768) {
+            sidebar.classList.remove('collapsed');
+            mainArea.classList.remove('expanded');
+        } else {
+            if (isCollapsed) {
+                sidebar.classList.add('collapsed');
+                mainArea.classList.add('expanded');
+            } else {
+                sidebar.classList.remove('collapsed');
+                mainArea.classList.remove('expanded');
+            }
+        }
+    }
+
+    applySidebarState();
+
+    toggleBtn.addEventListener('click', () => {
+        if (window.innerWidth <= 768) {
+            sidebar.classList.toggle('mobile-open');
+            overlay.style.display = sidebar.classList.contains('mobile-open') ? 'block' : 'none';
+        } else {
+            isCollapsed = !isCollapsed;
+            localStorage.setItem('sidebarCollapsed', isCollapsed);
+            applySidebarState();
+        }
+    });
+
+    overlay.addEventListener('click', () => {
+        sidebar.classList.remove('mobile-open');
+        overlay.style.display = 'none';
+    });
+
+    window.addEventListener('resize', applySidebarState);
+</script>
+
+<style>
+    .sidebar-overlay {
+        display: none;
+        position: fixed;
+        inset: 0;
+        background: rgba(0,0,0,0.5);
+        z-index: 999;
+        backdrop-filter: blur(2px);
+    }
+</style>
+
+@await RenderSectionAsync("Scripts", required: false)
+</body>
+</html>
