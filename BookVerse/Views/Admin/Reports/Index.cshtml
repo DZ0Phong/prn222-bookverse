@@ -254,13 +254,13 @@
                 responsive: true, maintainAspectRatio: false,
                 interaction: { intersect: false, mode: 'index' },
                 plugins: {
-                    legend: { labels: { color: 'rgba(160,174,192,0.9)', font: { family: 'Inter', size: 12 } } },
+                    legend: { labels: { color: '#131b2e', font: { family: 'Inter', size: 12 } } },
                     tooltip: {
-                        backgroundColor: '#16213e',
-                        borderColor: 'rgba(255,255,255,0.1)',
+                        backgroundColor: '#131b2e',
+                        borderColor: 'rgba(0,0,0,0.1)',
                         borderWidth: 1,
                         titleColor: '#fff',
-                        bodyColor: 'rgba(160,174,192,0.9)',
+                        bodyColor: 'rgba(255,255,255,0.9)',
                         padding: 10,
                         callbacks: {
                             label: ctx => ' ' + Number(ctx.raw).toLocaleString('vi-VN') + ' ₫'
@@ -268,14 +268,14 @@
                     }
                 },
                 scales: {
-                    x: { ticks: { color: 'rgba(160,174,192,0.7)', font: { size: 11 } }, grid: { color: 'rgba(255,255,255,0.05)' } },
+                    x: { ticks: { color: '#757683', font: { size: 11 } }, grid: { color: 'rgba(16, 37, 121, 0.08)' } },
                     y: {
                         ticks: {
-                            color: 'rgba(160,174,192,0.7)',
+                            color: '#757683',
                             font: { size: 11 },
                             callback: v => Number(v).toLocaleString('vi-VN') + ' ₫'
                         },
-                        grid: { color: 'rgba(255,255,255,0.05)' },
+                        grid: { color: 'rgba(16, 37, 121, 0.08)' },
                         beginAtZero: true
                     }
                 }

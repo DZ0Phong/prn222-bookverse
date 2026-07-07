@@ -1,8 +1,8 @@
 {
   "version": 2,
-  "dgSpecHash": "1nU1SuHx4pg=",
+  "dgSpecHash": "2JqZQFEs3J8=",
   "success": true,
-  "projectFilePath": "C:\\FPTU\\Projects\\PRN222\\Final_Projects\\BookVerse\\BookVerse.csproj",
+  "projectFilePath": "C:\\FPTU\\TEST_1\\prn222-bookverse\\BookVerse\\BookVerse.csproj",
   "expectedPackageFiles": [
     "C:\\Users\\doand\\.nuget\\packages\\azure.core\\1.38.0\\azure.core.1.38.0.nupkg.sha512",
     "C:\\Users\\doand\\.nuget\\packages\\azure.identity\\1.11.4\\azure.identity.1.11.4.nupkg.sha512",

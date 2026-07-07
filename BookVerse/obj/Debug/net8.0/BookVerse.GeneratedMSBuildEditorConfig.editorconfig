@@ -17,109 +17,109 @@ build_property._SupportedPlatformList = Linux,macOS,Windows
 build_property._SupportedPlatformList = Linux,macOS,Windows
 build_property.RootNamespace = BookVerse
 build_property.RootNamespace = BookVerse
-build_property.ProjectDir = C:\FPTU\Projects\PRN222\Final_Projects\BookVerse\
+build_property.ProjectDir = C:\FPTU\TEST_1\prn222-bookverse\BookVerse\
 build_property.EnableComHosting = 
 build_property.EnableGeneratedComInterfaceComImportInterop = 
 build_property.RazorLangVersion = 8.0
 build_property.SupportLocalizedComponentNames = 
 build_property.GenerateRazorMetadataSourceChecksumAttributes = 
-build_property.MSBuildProjectDirectory = C:\FPTU\Projects\PRN222\Final_Projects\BookVerse
+build_property.MSBuildProjectDirectory = C:\FPTU\TEST_1\prn222-bookverse\BookVerse
 build_property._RazorSourceGeneratorDebug = 
 build_property.EffectiveAnalysisLevelStyle = 8.0
 build_property.EnableCodeStyleSeverity = 
 
-[C:/FPTU/Projects/PRN222/Final_Projects/BookVerse/Views/Account/AccessDenied.cshtml]
+[C:/FPTU/TEST_1/prn222-bookverse/BookVerse/Views/Account/AccessDenied.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcQWNjb3VudFxBY2Nlc3NEZW5pZWQuY3NodG1s
 build_metadata.AdditionalFiles.CssScope = 
 
-[C:/FPTU/Projects/PRN222/Final_Projects/BookVerse/Views/Account/Login.cshtml]
+[C:/FPTU/TEST_1/prn222-bookverse/BookVerse/Views/Account/Login.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcQWNjb3VudFxMb2dpbi5jc2h0bWw=
 build_metadata.AdditionalFiles.CssScope = 
 
-[C:/FPTU/Projects/PRN222/Final_Projects/BookVerse/Views/Account/Register.cshtml]
+[C:/FPTU/TEST_1/prn222-bookverse/BookVerse/Views/Account/Register.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcQWNjb3VudFxSZWdpc3Rlci5jc2h0bWw=
 build_metadata.AdditionalFiles.CssScope = 
 
-[C:/FPTU/Projects/PRN222/Final_Projects/BookVerse/Views/Admin/Auth/Login.cshtml]
+[C:/FPTU/TEST_1/prn222-bookverse/BookVerse/Views/Admin/Auth/Login.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcQWRtaW5cQXV0aFxMb2dpbi5jc2h0bWw=
 build_metadata.AdditionalFiles.CssScope = 
 
-[C:/FPTU/Projects/PRN222/Final_Projects/BookVerse/Views/Admin/Books/CreateEdit.cshtml]
+[C:/FPTU/TEST_1/prn222-bookverse/BookVerse/Views/Admin/Books/CreateEdit.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcQWRtaW5cQm9va3NcQ3JlYXRlRWRpdC5jc2h0bWw=
 build_metadata.AdditionalFiles.CssScope = 
 
-[C:/FPTU/Projects/PRN222/Final_Projects/BookVerse/Views/Admin/Books/Index.cshtml]
+[C:/FPTU/TEST_1/prn222-bookverse/BookVerse/Views/Admin/Books/Index.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcQWRtaW5cQm9va3NcSW5kZXguY3NodG1s
 build_metadata.AdditionalFiles.CssScope = 
 
-[C:/FPTU/Projects/PRN222/Final_Projects/BookVerse/Views/Admin/Categories/Index.cshtml]
+[C:/FPTU/TEST_1/prn222-bookverse/BookVerse/Views/Admin/Categories/Index.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcQWRtaW5cQ2F0ZWdvcmllc1xJbmRleC5jc2h0bWw=
 build_metadata.AdditionalFiles.CssScope = 
 
-[C:/FPTU/Projects/PRN222/Final_Projects/BookVerse/Views/Admin/Dashboard/Index.cshtml]
+[C:/FPTU/TEST_1/prn222-bookverse/BookVerse/Views/Admin/Dashboard/Index.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcQWRtaW5cRGFzaGJvYXJkXEluZGV4LmNzaHRtbA==
 build_metadata.AdditionalFiles.CssScope = 
 
-[C:/FPTU/Projects/PRN222/Final_Projects/BookVerse/Views/Admin/Orders/Detail.cshtml]
+[C:/FPTU/TEST_1/prn222-bookverse/BookVerse/Views/Admin/Orders/Detail.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcQWRtaW5cT3JkZXJzXERldGFpbC5jc2h0bWw=
 build_metadata.AdditionalFiles.CssScope = 
 
-[C:/FPTU/Projects/PRN222/Final_Projects/BookVerse/Views/Admin/Orders/Index.cshtml]
+[C:/FPTU/TEST_1/prn222-bookverse/BookVerse/Views/Admin/Orders/Index.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcQWRtaW5cT3JkZXJzXEluZGV4LmNzaHRtbA==
 build_metadata.AdditionalFiles.CssScope = 
 
-[C:/FPTU/Projects/PRN222/Final_Projects/BookVerse/Views/Admin/Reports/Index.cshtml]
+[C:/FPTU/TEST_1/prn222-bookverse/BookVerse/Views/Admin/Reports/Index.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcQWRtaW5cUmVwb3J0c1xJbmRleC5jc2h0bWw=
 build_metadata.AdditionalFiles.CssScope = 
 
-[C:/FPTU/Projects/PRN222/Final_Projects/BookVerse/Views/Admin/Reviews/Index.cshtml]
+[C:/FPTU/TEST_1/prn222-bookverse/BookVerse/Views/Admin/Reviews/Index.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcQWRtaW5cUmV2aWV3c1xJbmRleC5jc2h0bWw=
 build_metadata.AdditionalFiles.CssScope = 
 
-[C:/FPTU/Projects/PRN222/Final_Projects/BookVerse/Views/Admin/Users/Index.cshtml]
+[C:/FPTU/TEST_1/prn222-bookverse/BookVerse/Views/Admin/Users/Index.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcQWRtaW5cVXNlcnNcSW5kZXguY3NodG1s
 build_metadata.AdditionalFiles.CssScope = 
 
-[C:/FPTU/Projects/PRN222/Final_Projects/BookVerse/Views/Admin/Vouchers/Index.cshtml]
+[C:/FPTU/TEST_1/prn222-bookverse/BookVerse/Views/Admin/Vouchers/Index.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcQWRtaW5cVm91Y2hlcnNcSW5kZXguY3NodG1s
 build_metadata.AdditionalFiles.CssScope = 
 
-[C:/FPTU/Projects/PRN222/Final_Projects/BookVerse/Views/Admin/_ViewImports.cshtml]
+[C:/FPTU/TEST_1/prn222-bookverse/BookVerse/Views/Admin/_ViewImports.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcQWRtaW5cX1ZpZXdJbXBvcnRzLmNzaHRtbA==
 build_metadata.AdditionalFiles.CssScope = 
 
-[C:/FPTU/Projects/PRN222/Final_Projects/BookVerse/Views/Home/HomePage.cshtml]
+[C:/FPTU/TEST_1/prn222-bookverse/BookVerse/Views/Home/HomePage.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcSG9tZVxIb21lUGFnZS5jc2h0bWw=
 build_metadata.AdditionalFiles.CssScope = 
 
-[C:/FPTU/Projects/PRN222/Final_Projects/BookVerse/Views/Home/Login.cshtml]
+[C:/FPTU/TEST_1/prn222-bookverse/BookVerse/Views/Home/Login.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcSG9tZVxMb2dpbi5jc2h0bWw=
 build_metadata.AdditionalFiles.CssScope = 
 
-[C:/FPTU/Projects/PRN222/Final_Projects/BookVerse/Views/Home/Register.cshtml]
+[C:/FPTU/TEST_1/prn222-bookverse/BookVerse/Views/Home/Register.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcSG9tZVxSZWdpc3Rlci5jc2h0bWw=
 build_metadata.AdditionalFiles.CssScope = 
 
-[C:/FPTU/Projects/PRN222/Final_Projects/BookVerse/Views/Shared/Error.cshtml]
+[C:/FPTU/TEST_1/prn222-bookverse/BookVerse/Views/Shared/Error.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcU2hhcmVkXEVycm9yLmNzaHRtbA==
 build_metadata.AdditionalFiles.CssScope = 
 
-[C:/FPTU/Projects/PRN222/Final_Projects/BookVerse/Views/Shared/_AdminLayout.cshtml]
+[C:/FPTU/TEST_1/prn222-bookverse/BookVerse/Views/Shared/_AdminLayout.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcU2hhcmVkXF9BZG1pbkxheW91dC5jc2h0bWw=
 build_metadata.AdditionalFiles.CssScope = 
 
-[C:/FPTU/Projects/PRN222/Final_Projects/BookVerse/Views/Shared/_Layout.cshtml]
+[C:/FPTU/TEST_1/prn222-bookverse/BookVerse/Views/Shared/_Layout.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcU2hhcmVkXF9MYXlvdXQuY3NodG1s
 build_metadata.AdditionalFiles.CssScope = 
 
-[C:/FPTU/Projects/PRN222/Final_Projects/BookVerse/Views/Shared/_ValidationScriptsPartial.cshtml]
+[C:/FPTU/TEST_1/prn222-bookverse/BookVerse/Views/Shared/_ValidationScriptsPartial.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcU2hhcmVkXF9WYWxpZGF0aW9uU2NyaXB0c1BhcnRpYWwuY3NodG1s
 build_metadata.AdditionalFiles.CssScope = 
 
-[C:/FPTU/Projects/PRN222/Final_Projects/BookVerse/Views/_ViewImports.cshtml]
+[C:/FPTU/TEST_1/prn222-bookverse/BookVerse/Views/_ViewImports.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcX1ZpZXdJbXBvcnRzLmNzaHRtbA==
 build_metadata.AdditionalFiles.CssScope = 
 
-[C:/FPTU/Projects/PRN222/Final_Projects/BookVerse/Views/_ViewStart.cshtml]
+[C:/FPTU/TEST_1/prn222-bookverse/BookVerse/Views/_ViewStart.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcX1ZpZXdTdGFydC5jc2h0bWw=
 build_metadata.AdditionalFiles.CssScope = 
