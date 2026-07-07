@@ -1,17 +1,17 @@
 {
   "format": 1,
   "restore": {
-    "C:\\FPTU\\Projects\\PRN222\\Final_Projects\\BookVerse\\BookVerse.csproj": {}
+    "C:\\FPTU\\TEST_1\\prn222-bookverse\\BookVerse\\BookVerse.csproj": {}
   },
   "projects": {
-    "C:\\FPTU\\Projects\\PRN222\\Final_Projects\\BookVerse\\BookVerse.csproj": {
+    "C:\\FPTU\\TEST_1\\prn222-bookverse\\BookVerse\\BookVerse.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "C:\\FPTU\\Projects\\PRN222\\Final_Projects\\BookVerse\\BookVerse.csproj",
+        "projectUniqueName": "C:\\FPTU\\TEST_1\\prn222-bookverse\\BookVerse\\BookVerse.csproj",
         "projectName": "BookVerse",
-        "projectPath": "C:\\FPTU\\Projects\\PRN222\\Final_Projects\\BookVerse\\BookVerse.csproj",
+        "projectPath": "C:\\FPTU\\TEST_1\\prn222-bookverse\\BookVerse\\BookVerse.csproj",
         "packagesPath": "C:\\Users\\doand\\.nuget\\packages\\",
-        "outputPath": "C:\\FPTU\\Projects\\PRN222\\Final_Projects\\BookVerse\\obj\\",
+        "outputPath": "C:\\FPTU\\TEST_1\\prn222-bookverse\\BookVerse\\obj\\",
         "projectStyle": "PackageReference",
         "fallbackFolders": [
           "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"
