@@ -122,17 +122,19 @@
     <header class="bg-surface sticky top-0 z-50 border-b border-outline-variant shadow-sm">
         <div class="flex justify-between items-center px-gutter py-4 w-full max-w-container-max mx-auto">
             <div class="flex items-center gap-8 flex-1">
-                <a class="font-headline-md text-headline-md font-bold text-primary" href="#">Tiệm Sách Trí Tuệ</a>
-                <div class="hidden md:flex flex-1 max-w-md relative">
-                    <input class="w-full pl-10 pr-4 py-2 bg-surface-container-low border border-outline-variant rounded-full text-body-md focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent transition-all" placeholder="Tìm kiếm theo tên sách, tác giả..." type="text" />
-                    <span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-outline">search</span>
-                </div>
+                <a class="font-headline-md text-headline-md font-bold text-primary" href="/Home/HomePage">Tiệm Sách Trí Tuệ</a>
+                <form action="/Home/HomePage" method="get" class="hidden md:flex flex-1 max-w-md relative">
+                    <input name="search" value="@ViewBag.SearchTerm" class="w-full pl-10 pr-4 py-2 bg-surface-container-low border border-outline-variant rounded-full text-body-md focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent transition-all" placeholder="Tìm kiếm theo tên sách, tác giả..." type="text" />
+                    <button type="submit" class="absolute left-3 top-1/2 -translate-y-1/2 text-outline hover:text-primary transition-colors flex items-center border-none bg-transparent">
+                        <span class="material-symbols-outlined">search</span>
+                    </button>
+                </form>
             </div>
             <nav class="hidden lg:flex items-center gap-6 px-8">
-                <a class="text-primary font-bold border-b-2 border-primary pb-1 font-body-md transition-colors" href="#">Trang chủ</a>
-                <a class="text-on-surface-variant hover:text-primary transition-colors font-body-md" href="#">Sách mới</a>
-                <a class="text-on-surface-variant hover:text-primary transition-colors font-body-md" href="#">Khuyến mãi</a>
-                <a class="text-on-surface-variant hover:text-primary transition-colors font-body-md" href="#">Bán chạy</a>
+                <a class="text-primary font-bold border-b-2 border-primary pb-1 font-body-md transition-colors" href="/Home/HomePage">Trang chủ</a>
+                <a class="text-on-surface-variant hover:text-primary transition-colors font-body-md" href="/Home/HomePage#new-arrivals">Sách mới</a>
+                <a class="text-on-surface-variant hover:text-primary transition-colors font-body-md" href="/Home/HomePage#promotions">Khuyến mãi</a>
+                <a class="text-on-surface-variant hover:text-primary transition-colors font-body-md" href="/Home/HomePage#bestsellers">Bán chạy</a>
             </nav>
             <div class="flex items-center gap-4">
                 <button class="p-2 text-on-surface-variant hover:text-primary transition-colors relative">
@@ -199,197 +201,328 @@
     <!-- Secondary Nav (Categories) -->
     <div class="bg-surface-container-lowest border-b border-outline-variant hidden md:block">
         <div class="max-w-container-max mx-auto px-gutter py-3 flex items-center justify-between">
-            <ul class="flex gap-8 font-label-md text-label-md text-on-surface-variant">
-                <li><a class="hover:text-primary transition-colors" href="#">Văn học</a></li>
-                <li><a class="hover:text-primary transition-colors" href="#">Kinh tế</a></li>
-                <li><a class="hover:text-primary transition-colors" href="#">Kỹ năng sống</a></li>
-                <li><a class="hover:text-primary transition-colors" href="#">Thiếu nhi</a></li>
+            <ul class="flex gap-8 font-label-md text-label-md text-on-surface-variant flex-wrap">
+                @if (ViewBag.Categories != null)
+                {
+                    foreach (var cat in (IEnumerable<BookVerse.Models.Category>)ViewBag.Categories)
+                    {
+                        <li><a class="hover:text-primary transition-colors @(ViewBag.SelectedCategoryId == cat.CategoryId ? "text-primary font-bold border-b-2 border-primary pb-1" : "")" href="/Home/HomePage?categoryId=@cat.CategoryId">@cat.CategoryName</a></li>
+                    }
+                }
                 <li>
-                    <a class="hover:text-primary transition-colors font-bold flex items-center gap-1" href="#">
-                        <span class="material-symbols-outlined text-[16px]">apps</span> Xem tất cả danh mục
+                    <a class="hover:text-primary transition-colors font-bold flex items-center gap-1" href="/Home/HomePage">
+                        <span class="material-symbols-outlined text-[16px]">apps</span> Tất cả sách
                     </a>
                 </li>
             </ul>
         </div>
     </div>
     <main class="max-w-container-max mx-auto pb-stack-lg">
-        <!-- Hero Banner Carousel -->
-        <section class="mt-stack-md px-gutter">
-            <div class="relative h-[400px] rounded-xl overflow-hidden shadow-md group">
-                <div class="absolute inset-0 bg-cover bg-center transition-transform duration-700 group-hover:scale-105" data-alt="A grand, atmospheric bookstore library with high mahogany shelves reaching the ceiling. Soft morning sunlight streams through large arched windows, illuminating dust motes and highlighting leather-bound spines. The scene is elegant and intellectual, dominated by deep browns, warm amber glows, and hints of navy blue. The wide shot creates a sense of peaceful scholarly abundance." style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuCEJ6DLI651WmpGDaxDe4hdL6p6M9yBuYOYFc8hUv2UvLhSeB690UZWlqM_PayR3Q6wz8PhyeLmnCWD_EbZ10P5iI3LIhvPIwFHQJhF0lqyMBQV2cwZLpPdu-AaSLVmuMR40mVspyb83Var1wS9pUDG66Wo7qlynleIgQCQMrxrjSLGLToN1fn-fh__-HhG8B_lq2PRIrHirwN0TSvBUVqKqixtPobsFFrABTayluYE-V-KBjnqZyJi')">
-                </div>
-                <div class="absolute inset-0 bg-gradient-to-r from-black/60 to-transparent flex items-center px-12">
-                    <div class="max-w-lg text-white">
-                        <span class="inline-block px-3 py-1 bg-secondary-container text-on-secondary-container rounded-full text-label-md font-bold mb-4">KHUYẾN MÃI THÁNG 10</span>
-                        <h1 class="font-headline-lg text-headline-lg mb-4">Ngày hội Văn học: Ưu đãi lên tới 50%</h1>
-                        <p class="text-body-lg mb-8 opacity-90">Khám phá kho tàng tri thức từ các tác giả nổi tiếng trên toàn thế giới. Giao hàng miễn phí cho đơn hàng từ 250k.</p>
-                        <button class="bg-primary text-white px-8 py-3 rounded-lg font-bold hover:bg-primary-container transition-all flex items-center gap-2">
-                            Mua ngay <span class="material-symbols-outlined">arrow_forward</span>
-                        </button>
-                    </div>
-                </div>
-                <div class="absolute bottom-6 left-1/2 -translate-x-1/2 flex gap-2">
-                    <button class="w-3 h-3 rounded-full bg-white"></button>
-                    <button class="w-3 h-3 rounded-full bg-white/40"></button>
-                    <button class="w-3 h-3 rounded-full bg-white/40"></button>
-                </div>
-            </div>
-        </section>
-        <!-- Categories Section -->
-        <section class="mt-stack-lg px-gutter">
-            <div class="flex justify-between items-end mb-stack-md">
-                <h2 class="font-headline-md text-headline-md text-primary">Danh mục nổi bật</h2>
-            </div>
-            <div class="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-4">
-                <a class="bg-surface-container-low p-6 rounded-xl text-center border border-outline-variant hover:shadow-md hover:-translate-y-1 transition-all" href="#">
-                    <div class="w-12 h-12 bg-primary-fixed rounded-full flex items-center justify-center mx-auto mb-4">
-                        <span class="material-symbols-outlined text-primary text-[28px]">history_edu</span>
-                    </div>
-                    <span class="font-bold text-on-surface">Văn học</span>
-                </a>
-                <a class="bg-surface-container-low p-6 rounded-xl text-center border border-outline-variant hover:shadow-md hover:-translate-y-1 transition-all" href="#">
-                    <div class="w-12 h-12 bg-secondary-container rounded-full flex items-center justify-center mx-auto mb-4">
-                        <span class="material-symbols-outlined text-secondary text-[28px]">trending_up</span>
-                    </div>
-                    <span class="font-bold text-on-surface">Kinh tế</span>
-                </a>
-                <a class="bg-surface-container-low p-6 rounded-xl text-center border border-outline-variant hover:shadow-md hover:-translate-y-1 transition-all" href="#">
-                    <div class="w-12 h-12 bg-tertiary-fixed rounded-full flex items-center justify-center mx-auto mb-4">
-                        <span class="material-symbols-outlined text-on-tertiary-fixed-variant text-[28px]">psychology</span>
-                    </div>
-                    <span class="font-bold text-on-surface">Kỹ năng</span>
-                </a>
-                <a class="bg-surface-container-low p-6 rounded-xl text-center border border-outline-variant hover:shadow-md hover:-translate-y-1 transition-all" href="#">
-                    <div class="w-12 h-12 bg-primary-fixed rounded-full flex items-center justify-center mx-auto mb-4">
-                        <span class="material-symbols-outlined text-primary text-[28px]">child_care</span>
-                    </div>
-                    <span class="font-bold text-on-surface">Thiếu nhi</span>
-                </a>
-                <a class="bg-surface-container-low p-6 rounded-xl text-center border border-outline-variant hover:shadow-md hover:-translate-y-1 transition-all" href="#">
-                    <div class="w-12 h-12 bg-secondary-container rounded-full flex items-center justify-center mx-auto mb-4">
-                        <span class="material-symbols-outlined text-secondary text-[28px]">translate</span>
-                    </div>
-                    <span class="font-bold text-on-surface">Ngoại ngữ</span>
-                </a>
-                <a class="bg-surface-container-low p-6 rounded-xl text-center border border-outline-variant hover:shadow-md hover:-translate-y-1 transition-all" href="#">
-                    <div class="w-12 h-12 bg-tertiary-fixed rounded-full flex items-center justify-center mx-auto mb-4">
-                        <span class="material-symbols-outlined text-on-tertiary-fixed-variant text-[28px]">science</span>
-                    </div>
-                    <span class="font-bold text-on-surface">Khoa học</span>
-                </a>
-            </div>
-        </section>
-        <!-- Sách Nổi Bật -->
-        <section class="mt-stack-lg px-gutter">
-            <div class="flex justify-between items-end mb-stack-md">
-                <h2 class="font-headline-md text-headline-md text-primary">Sách nổi bật</h2>
-                <a class="text-primary font-bold flex items-center gap-1 hover:underline" href="#">Xem thêm <span class="material-symbols-outlined text-[18px]">chevron_right</span></a>
-            </div>
-            <div class="grid grid-cols-2 md:grid-cols-4 gap-gutter">
-                <!-- Book Card Template (Repeat 8 times) -->
-                <script>
-                    const books = [
-                        {title: "Cây Cam Ngọt Của Tôi", author: "José Mauro de Vasconcelos", price: "75.000", oldPrice: "105.000", rating: 5, discount: "-30%"},
-                        {title: "Tâm Lý Học Tội Phạm", author: "Nhiều tác giả", price: "128.000", oldPrice: "160.000", rating: 4, discount: "-20%"},
-                        {title: "Atomic Habits", author: "James Clear", price: "155.000", oldPrice: "189.000", rating: 5, discount: "-18%"},
-                        {title: "Nhà Giả Kim", author: "Paulo Coelho", price: "62.000", oldPrice: "79.000", rating: 5, discount: "-22%"},
-                        {title: "Đắc Nhân Tâm", author: "Dale Carnegie", price: "72.000", oldPrice: "90.000", rating: 4, discount: "-20%"},
-                        {title: "Sói Già Phố Wall", author: "Jordan Belfort", price: "195.000", oldPrice: "245.000", rating: 5, discount: "-20%"},
-                        {title: "Cha Giàu Cha Nghèo", author: "Robert Kiyosaki", price: "115.000", oldPrice: "145.000", rating: 4, discount: "-21%"},
-                        {title: "Hoàng Tử Bé", author: "Antoine de Saint-Exupéry", price: "45.000", oldPrice: "65.000", rating: 5, discount: "-31%"}
-                    ];
+        @if (ViewBag.SearchResults != null || ViewBag.CategoryResults != null)
+        {
+            var title = ViewBag.SearchResults != null ? $"Kết quả tìm kiếm cho: \"{ViewBag.SearchTerm}\"" : $"Danh mục: {ViewBag.CategoryName}";
+            var results = ViewBag.SearchResults != null ? (IEnumerable<BookVerse.Models.Book>)ViewBag.SearchResults : (IEnumerable<BookVerse.Models.Book>)ViewBag.CategoryResults;
 
-                    document.write(books.map((book, idx) => `
-                        <div class="book-card-hover group relative bg-white border border-outline-variant rounded-xl p-4 transition-all hover:shadow-lg">
-                            <div class="relative mb-4 aspect-[3/4] overflow-hidden rounded-lg bg-surface-container-low">
-                                <img src="placeholder" data-alt="Modern book cover design for ${book.title} by ${book.author}. Minimalist aesthetic, elegant typography, high-quality paperback texture. Colors: deep blue, gold foil accents, clean white backgrounds. Studio lighting, high resolution, 8k professional photography style." class="w-full h-full object-cover">
-                                <span class="absolute top-2 left-2 bg-error text-white text-[10px] font-bold px-2 py-1 rounded-full">${book.discount}</span>
-                                <div class="add-to-cart-btn absolute inset-x-0 bottom-0 p-4 opacity-0 transform translate-y-4 transition-all duration-300">
-                                    <button class="w-full bg-secondary text-white py-2 rounded-lg font-bold shadow-lg hover:bg-secondary-container hover:text-on-secondary-container transition-colors flex items-center justify-center gap-2">
-                                        <span class="material-symbols-outlined text-[18px]">shopping_cart</span> Thêm vào giỏ
-                                    </button>
+            <section class="mt-stack-lg px-gutter min-h-[400px]">
+                <div class="flex justify-between items-center mb-stack-md border-b border-outline-variant pb-4">
+                    <h2 class="font-headline-md text-headline-md text-primary">@title</h2>
+                    <a class="bg-primary-fixed text-on-primary-fixed-variant px-4 py-2 rounded-lg font-bold hover:bg-surface-container transition-all flex items-center gap-2 text-body-md" href="/Home/HomePage">
+                        <span class="material-symbols-outlined text-[18px]">arrow_back</span> Quay lại trang chủ
+                    </a>
+                </div>
+
+                @if (!results.Any())
+                {
+                    <div class="text-center py-16 bg-surface-container-lowest rounded-2xl border border-outline-variant">
+                        <span class="material-symbols-outlined text-[80px] text-outline mb-4">search_off</span>
+                        <h3 class="font-headline-sm text-headline-sm text-on-surface mb-2">Không tìm thấy sách nào</h3>
+                        <p class="text-on-surface-variant max-w-md mx-auto">Vui lòng thử tìm kiếm với từ khóa khác hoặc quay lại trang chủ.</p>
+                    </div>
+                }
+                else
+                {
+                    <div class="grid grid-cols-2 md:grid-cols-4 gap-gutter">
+                        @foreach (var book in results)
+                        {
+                            var imgUrl = string.IsNullOrWhiteSpace(book.Image) ? "https://images.unsplash.com/photo-1543002588-bfa74002ed7e?auto=format&fit=crop&w=400&q=80" : book.Image;
+                            <div class="book-card-hover group relative bg-white border border-outline-variant rounded-xl p-4 transition-all hover:shadow-lg cursor-pointer book-card"
+                                 data-id="@book.BookId"
+                                 data-title="@book.Title"
+                                 data-author="@book.Author"
+                                 data-category="@(book.Category?.CategoryName ?? "Chưa phân loại")"
+                                 data-publisher="@(book.Publisher ?? "Đang cập nhật")"
+                                 data-price="@string.Format("{0:N0}", book.Price)"
+                                 data-image="@imgUrl"
+                                 data-quantity="@(book.Quantity ?? 0)"
+                                 data-description="@book.Description">
+                                <div class="relative mb-4 aspect-[3/4] overflow-hidden rounded-lg bg-surface-container-low">
+                                    <img src="@imgUrl" alt="@book.Title" class="w-full h-full object-cover">
+                                    <div class="add-to-cart-btn absolute inset-x-0 bottom-0 p-4 opacity-0 transform translate-y-4 transition-all duration-300">
+                                        <button class="w-full bg-secondary text-white py-2 rounded-lg font-bold shadow-lg hover:bg-secondary-container hover:text-on-secondary-container transition-colors flex items-center justify-center gap-2" onclick="event.stopPropagation(); addToCart(@book.BookId);">
+                                            <span class="material-symbols-outlined text-[18px]">shopping_cart</span> Thêm vào giỏ
+                                        </button>
+                                    </div>
+                                </div>
+                                <h3 class="font-bold text-on-surface line-clamp-2 min-h-[40px] mb-1 group-hover:text-primary transition-colors">@book.Title</h3>
+                                <p class="text-label-md text-on-surface-variant mb-2">@book.Author</p>
+                                <div class="flex items-center gap-1 mb-2">
+                                    @for (int i = 0; i < 5; i++)
+                                    {
+                                        <span class="material-symbols-outlined text-[14px] text-tertiary-container filled-icon">star</span>
+                                    }
+                                </div>
+                                <div class="flex items-center gap-3">
+                                    <span class="text-primary font-bold">@string.Format("{0:N0}", book.Price)đ</span>
                                 </div>
                             </div>
-                            <h3 class="font-bold text-on-surface line-clamp-2 min-h-[40px] mb-1 group-hover:text-primary transition-colors">${book.title}</h3>
-                            <p class="text-label-md text-on-surface-variant mb-2">${book.author}</p>
-                            <div class="flex items-center gap-1 mb-2">
-                                ${Array(5).fill(0).map((_, i) => `<span class="material-symbols-outlined text-[14px] ${i < book.rating ? 'text-tertiary-container filled-icon' : 'text-outline-variant'}">star</span>`).join('')}
-                            </div>
-                            <div class="flex items-center gap-3">
-                                <span class="text-primary font-bold">${book.price}đ</span>
-                                <span class="text-on-surface-variant text-[12px] line-through">${book.oldPrice}đ</span>
-                            </div>
-                        </div>
-                    `).join(''));
-                </script>
-            </div>
-        </section>
-        <!-- Featured Section with Shader -->
-        <section class="mt-stack-lg px-gutter">
-            <div class="relative rounded-2xl overflow-hidden p-12 min-h-[300px]">
-
-                <div class="relative z-10 flex flex-col md:flex-row items-center justify-between gap-8">
-                    <div class="max-w-xl text-white">
-                        <h2 class="font-headline-lg text-headline-lg mb-4">Đăng ký thành viên mới</h2>
-                        <p class="text-body-lg opacity-90 mb-6">Nhận ngay voucher giảm giá 50,000đ cho đơn hàng đầu tiên và ưu đãi tích điểm cho mỗi cuốn sách bạn mua.</p>
-                        <div class="flex gap-2">
-                            <input class="px-4 py-2 rounded-lg bg-white/20 border border-white/30 text-white placeholder-white/60 focus:outline-none focus:ring-2 focus:ring-white flex-1" placeholder="Email của bạn..." type="email" />
-                            <button class="bg-white text-primary px-6 py-2 rounded-lg font-bold hover:bg-surface-container transition-all">Đăng ký ngay</button>
+                        }
+                    </div>
+                }
+            </section>
+        }
+        else
+        {
+            <!-- Hero Banner Carousel -->
+            <section class="mt-stack-md px-gutter">
+                <div class="relative h-[400px] rounded-xl overflow-hidden shadow-md group">
+                    <div class="absolute inset-0 bg-cover bg-center transition-transform duration-700 group-hover:scale-105" data-alt="A grand, atmospheric bookstore library with high mahogany shelves reaching the ceiling. Soft morning sunlight streams through large arched windows, illuminating dust motes and highlighting leather-bound spines. The scene is elegant and intellectual, dominated by deep browns, warm amber glows, and hints of navy blue. The wide shot creates a sense of peaceful scholarly abundance." style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuCEJ6DLI651WmpGDaxDe4hdL6p6M9yBuYOYFc8hUv2UvLhSeB690UZWlqM_PayR3Q6wz8PhyeLmnCWD_EbZ10P5iI3LIhvPIwFHQJhF0lqyMBQV2cwZLpPdu-AaSLVmuMR40mVspyb83Var1wS9pUDG66Wo7qlynleIgQCQMrxrjSLGLToN1fn-fh__-HhG8B_lq2PRIrHirwN0TSvBUVqKqixtPobsFFrABTayluYE-V-KBjnqZyJi')">
+                    </div>
+                    <div class="absolute inset-0 bg-gradient-to-r from-black/60 to-transparent flex items-center px-12">
+                        <div class="max-w-lg text-white">
+                            <span class="inline-block px-3 py-1 bg-secondary-container text-on-secondary-container rounded-full text-label-md font-bold mb-4">KHUYẾN MÃI THÁNG 10</span>
+                            <h1 class="font-headline-lg text-headline-lg mb-4">Ngày hội Văn học: Ưu đãi lên tới 50%</h1>
+                            <p class="text-body-lg mb-8 opacity-90">Khám phá kho tàng tri thức từ các tác giả nổi tiếng trên toàn thế giới. Giao hàng miễn phí cho đơn hàng từ 250k.</p>
+                            <a href="/Home/HomePage#promotions" class="inline-flex bg-primary text-white px-8 py-3 rounded-lg font-bold hover:bg-primary-container transition-all items-center gap-2">
+                                Mua ngay <span class="material-symbols-outlined">arrow_forward</span>
+                            </a>
                         </div>
                     </div>
-                    <div class="hidden md:block">
-                        <span class="material-symbols-outlined text-[120px] text-white opacity-20">mail</span>
-                    </div>
                 </div>
-            </div>
-        </section>
-        <!-- Sách Mới Section -->
-        <section class="mt-stack-lg px-gutter">
-            <div class="flex justify-between items-end mb-stack-md">
-                <h2 class="font-headline-md text-headline-md text-primary">Sách mới về</h2>
-                <div class="flex gap-2">
-                    <button class="p-2 border border-outline-variant rounded-full hover:bg-surface-container transition-all">
-                        <span class="material-symbols-outlined">chevron_left</span>
-                    </button>
-                    <button class="p-2 border border-outline-variant rounded-full hover:bg-surface-container transition-all">
-                        <span class="material-symbols-outlined">chevron_right</span>
-                    </button>
-                </div>
-            </div>
-            <div class="grid grid-cols-2 md:grid-cols-4 gap-gutter">
-                <!-- Reusing Book Card Template but without discount for "Sách Mới" -->
-                <script>
-                    const newBooks = [
-                        {title: "Kiếp Nào Ta Cũng Tìm Thấy Nhau", author: "Brian L. Weiss", price: "125.000", rating: 5},
-                        {title: "Sức Mạnh Của Sự Tĩnh Lặng", author: "Eckhart Tolle", price: "88.000", rating: 4},
-                        {title: "Càng Kỷ Luật Càng Tự Do", author: "Ca Tây", price: "110.000", rating: 5},
-                        {title: "Người Giàu Có Nhất Thành Babylon", author: "George S. Clason", price: "79.000", rating: 5}
-                    ];
+            </section>
 
-                    document.write(newBooks.map((book) => `
-                        <div class="book-card-hover group relative bg-white border border-outline-variant rounded-xl p-4 transition-all hover:shadow-lg">
-                            <div class="relative mb-4 aspect-[3/4] overflow-hidden rounded-lg bg-surface-container-low">
-                                <img src="placeholder" data-alt="Elegantly designed book cover for ${book.title} by ${book.author}. Visual style is modern and minimalist. Professional commercial photography, soft studio lighting, sharp focus on texture and typography. Color palette: sophisticated muted tones, deep navy, slate gray, and cream." class="w-full h-full object-cover">
-                                <span class="absolute top-2 right-2 bg-secondary text-white text-[10px] font-bold px-2 py-1 rounded-full uppercase">Mới</span>
-                                <div class="add-to-cart-btn absolute inset-x-0 bottom-0 p-4 opacity-0 transform translate-y-4 transition-all duration-300">
-                                    <button class="w-full bg-secondary text-white py-2 rounded-lg font-bold shadow-lg hover:bg-secondary-container hover:text-on-secondary-container transition-colors flex items-center justify-center gap-2">
-                                        <span class="material-symbols-outlined text-[18px]">shopping_cart</span> Thêm vào giỏ
-                                    </button>
+            <!-- Categories Section -->
+            <section class="mt-stack-lg px-gutter">
+                <div class="flex justify-between items-end mb-stack-md">
+                    <h2 class="font-headline-md text-headline-md text-primary">Danh mục nổi bật</h2>
+                </div>
+                <div class="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-4">
+                    @if (ViewBag.Categories != null)
+                    {
+                        var catIcons = new Dictionary<string, string>
+                        {
+                            { "Văn học", "history_edu" },
+                            { "Kinh tế", "trending_up" },
+                            { "Kỹ năng sống", "psychology" },
+                            { "Khoa học Viễn tưởng", "science" }
+                        };
+                        var catBgClasses = new Dictionary<string, string>
+                        {
+                            { "Văn học", "bg-primary-fixed" },
+                            { "Kinh tế", "bg-secondary-container" },
+                            { "Kỹ năng sống", "bg-tertiary-fixed" },
+                            { "Khoa học Viễn tưởng", "bg-secondary-container" }
+                        };
+                        var catIconColorClasses = new Dictionary<string, string>
+                        {
+                            { "Văn học", "text-primary" },
+                            { "Kinh tế", "text-secondary" },
+                            { "Kỹ năng sống", "text-on-tertiary-fixed-variant" },
+                            { "Khoa học Viễn tưởng", "text-secondary" }
+                        };
+
+                        foreach (var cat in (IEnumerable<BookVerse.Models.Category>)ViewBag.Categories)
+                        {
+                            var iconName = catIcons.ContainsKey(cat.CategoryName!) ? catIcons[cat.CategoryName!] : "menu_book";
+                            var bgClass = catBgClasses.ContainsKey(cat.CategoryName!) ? catBgClasses[cat.CategoryName!] : "bg-primary-fixed";
+                            var iconColor = catIconColorClasses.ContainsKey(cat.CategoryName!) ? catIconColorClasses[cat.CategoryName!] : "text-primary";
+
+                            <a class="bg-surface-container-low p-6 rounded-xl text-center border border-outline-variant hover:shadow-md hover:-translate-y-1 transition-all" href="/Home/HomePage?categoryId=@cat.CategoryId">
+                                <div class="w-12 h-12 @bgClass rounded-full flex items-center justify-center mx-auto mb-4">
+                                    <span class="material-symbols-outlined @iconColor text-[28px]">@iconName</span>
+                                </div>
+                                <span class="font-bold text-on-surface">@cat.CategoryName</span>
+                            </a>
+                        }
+                    }
+                </div>
+            </section>
+
+            <!-- Sách Nổi Bật / Bán chạy -->
+            <section id="bestsellers" class="mt-stack-lg px-gutter scroll-mt-20">
+                <div class="flex justify-between items-end mb-stack-md">
+                    <h2 class="font-headline-md text-headline-md text-primary">Sách bán chạy</h2>
+                </div>
+                <div class="grid grid-cols-2 md:grid-cols-4 gap-gutter">
+                    @if (ViewBag.BestSellers != null)
+                    {
+                        foreach (var book in (IEnumerable<BookVerse.Models.Book>)ViewBag.BestSellers)
+                        {
+                            var imgUrl = string.IsNullOrWhiteSpace(book.Image) ? "https://images.unsplash.com/photo-1544947950-fa07a98d237f?auto=format&fit=crop&w=400&q=80" : book.Image;
+                            var discountPercent = (book.BookId % 3 == 0) ? 30 : ((book.BookId % 3 == 1) ? 20 : 15);
+                            var oldPrice = (book.Price ?? 0) / (1 - (discountPercent / 100m));
+                            
+                            <div class="book-card-hover group relative bg-white border border-outline-variant rounded-xl p-4 transition-all hover:shadow-lg cursor-pointer book-card"
+                                 data-id="@book.BookId"
+                                 data-title="@book.Title"
+                                 data-author="@book.Author"
+                                 data-category="@(book.Category?.CategoryName ?? "Chưa phân loại")"
+                                 data-publisher="@(book.Publisher ?? "Đang cập nhật")"
+                                 data-price="@string.Format("{0:N0}", book.Price)"
+                                 data-image="@imgUrl"
+                                 data-quantity="@(book.Quantity ?? 0)"
+                                 data-description="@book.Description">
+                                <div class="relative mb-4 aspect-[3/4] overflow-hidden rounded-lg bg-surface-container-low">
+                                    <img src="@imgUrl" alt="@book.Title" class="w-full h-full object-cover">
+                                    <span class="absolute top-2 left-2 bg-error text-white text-[10px] font-bold px-2 py-1 rounded-full">-@discountPercent%</span>
+                                    <div class="add-to-cart-btn absolute inset-x-0 bottom-0 p-4 opacity-0 transform translate-y-4 transition-all duration-300">
+                                        <button class="w-full bg-secondary text-white py-2 rounded-lg font-bold shadow-lg hover:bg-secondary-container hover:text-on-secondary-container transition-colors flex items-center justify-center gap-2" onclick="event.stopPropagation(); addToCart(@book.BookId);">
+                                            <span class="material-symbols-outlined text-[18px]">shopping_cart</span> Thêm vào giỏ
+                                        </button>
+                                    </div>
+                                </div>
+                                <h3 class="font-bold text-on-surface line-clamp-2 min-h-[40px] mb-1 group-hover:text-primary transition-colors">@book.Title</h3>
+                                <p class="text-label-md text-on-surface-variant mb-2">@book.Author</p>
+                                <div class="flex items-center gap-1 mb-2">
+                                    @for (int i = 0; i < 5; i++)
+                                    {
+                                        <span class="material-symbols-outlined text-[14px] text-tertiary-container filled-icon">star</span>
+                                    }
+                                </div>
+                                <div class="flex items-center gap-3">
+                                    <span class="text-primary font-bold">@string.Format("{0:N0}", book.Price)đ</span>
+                                    <span class="text-on-surface-variant text-[12px] line-through">@string.Format("{0:N0}", oldPrice)đ</span>
                                 </div>
                             </div>
-                            <h3 class="font-bold text-on-surface line-clamp-2 min-h-[40px] mb-1 group-hover:text-primary transition-colors">${book.title}</h3>
-                            <p class="text-label-md text-on-surface-variant mb-2">${book.author}</p>
-                            <div class="flex items-center gap-1 mb-2">
-                                ${Array(5).fill(0).map((_, i) => `<span class="material-symbols-outlined text-[14px] ${i < book.rating ? 'text-tertiary-container filled-icon' : 'text-outline-variant'}">star</span>`).join('')}
+                        }
+                    }
+                </div>
+            </section>
+
+            <!-- Sách Khuyến Mãi -->
+            <section id="promotions" class="mt-stack-lg px-gutter scroll-mt-20">
+                <div class="flex justify-between items-end mb-stack-md">
+                    <div>
+                        <h2 class="font-headline-md text-headline-md text-primary">Khuyến mãi cực hot</h2>
+                        <p class="text-body-sm text-on-surface-variant mt-1">Săn ngay ưu đãi khủng từ các tựa sách chọn lọc</p>
+                    </div>
+                </div>
+                <div class="grid grid-cols-2 md:grid-cols-4 gap-gutter">
+                    @if (ViewBag.Promotions != null)
+                    {
+                        foreach (var book in (IEnumerable<BookVerse.Models.Book>)ViewBag.Promotions)
+                        {
+                            var imgUrl = string.IsNullOrWhiteSpace(book.Image) ? "https://images.unsplash.com/photo-1544947950-fa07a98d237f?auto=format&fit=crop&w=400&q=80" : book.Image;
+                            var discountPercent = (book.BookId % 2 == 0) ? 25 : 35;
+                            var oldPrice = (book.Price ?? 0) / (1 - (discountPercent / 100m));
+
+                            <div class="book-card-hover group relative bg-white border border-outline-variant rounded-xl p-4 transition-all hover:shadow-lg cursor-pointer book-card"
+                                 data-id="@book.BookId"
+                                 data-title="@book.Title"
+                                 data-author="@book.Author"
+                                 data-category="@(book.Category?.CategoryName ?? "Chưa phân loại")"
+                                 data-publisher="@(book.Publisher ?? "Đang cập nhật")"
+                                 data-price="@string.Format("{0:N0}", book.Price)"
+                                 data-image="@imgUrl"
+                                 data-quantity="@(book.Quantity ?? 0)"
+                                 data-description="@book.Description">
+                                <div class="relative mb-4 aspect-[3/4] overflow-hidden rounded-lg bg-surface-container-low">
+                                    <img src="@imgUrl" alt="@book.Title" class="w-full h-full object-cover">
+                                    <span class="absolute top-2 left-2 bg-error text-white text-[10px] font-bold px-2 py-1 rounded-full">-@discountPercent%</span>
+                                    <div class="add-to-cart-btn absolute inset-x-0 bottom-0 p-4 opacity-0 transform translate-y-4 transition-all duration-300">
+                                        <button class="w-full bg-secondary text-white py-2 rounded-lg font-bold shadow-lg hover:bg-secondary-container hover:text-on-secondary-container transition-colors flex items-center justify-center gap-2" onclick="event.stopPropagation(); addToCart(@book.BookId);">
+                                            <span class="material-symbols-outlined text-[18px]">shopping_cart</span> Thêm vào giỏ
+                                        </button>
+                                    </div>
+                                </div>
+                                <h3 class="font-bold text-on-surface line-clamp-2 min-h-[40px] mb-1 group-hover:text-primary transition-colors">@book.Title</h3>
+                                <p class="text-label-md text-on-surface-variant mb-2">@book.Author</p>
+                                <div class="flex items-center gap-1 mb-2">
+                                    @for (int i = 0; i < 5; i++)
+                                    {
+                                        <span class="material-symbols-outlined text-[14px] text-tertiary-container filled-icon">star</span>
+                                    }
+                                </div>
+                                <div class="flex items-center gap-3">
+                                    <span class="text-primary font-bold">@string.Format("{0:N0}", book.Price)đ</span>
+                                    <span class="text-on-surface-variant text-[12px] line-through">@string.Format("{0:N0}", oldPrice)đ</span>
+                                </div>
                             </div>
-                            <div class="flex items-center gap-3">
-                                <span class="text-primary font-bold">${book.price}đ</span>
-                            </div>
+                        }
+                    }
+                </div>
+            </section>
+
+            <!-- Featured Section with Shader -->
+            <section class="mt-stack-lg px-gutter">
+                <div class="relative rounded-2xl overflow-hidden p-12 min-h-[300px] bg-gradient-to-r from-primary to-primary-container shadow-xl">
+                    <!-- Glowing gradient background blobs (shader effect) -->
+                    <div class="absolute -top-12 -left-12 w-64 h-64 rounded-full bg-secondary-container opacity-30 blur-3xl"></div>
+                    <div class="absolute -bottom-12 -right-12 w-64 h-64 rounded-full bg-tertiary-fixed-dim opacity-20 blur-3xl"></div>
+
+                    <div class="relative z-10 flex flex-col md:flex-row items-center justify-between gap-8 h-full">
+                        <div class="max-w-xl text-white">
+                            <h2 class="font-headline-lg text-headline-lg mb-4">Đăng ký thành viên mới</h2>
+                            <p class="text-body-lg opacity-90 mb-6">Nhận ngay voucher giảm giá 50,000đ cho đơn hàng đầu tiên và ưu đãi tích điểm cho mỗi cuốn sách bạn mua.</p>
+                            <form action="/Account/Register" method="get" class="flex gap-2 w-full max-w-md">
+                                <input name="email" class="px-4 py-2 rounded-lg bg-white/20 border border-white/30 text-white placeholder-white/60 focus:outline-none focus:ring-2 focus:ring-white flex-1" placeholder="Email của bạn..." type="email" required />
+                                <button type="submit" class="bg-white text-primary px-6 py-2 rounded-lg font-bold hover:bg-surface-container transition-all whitespace-nowrap">Đăng ký ngay</button>
+                            </form>
                         </div>
-                    `).join(''));
-                </script>
-            </div>
-        </section>
+                        <div class="hidden md:block">
+                            <span class="material-symbols-outlined text-[120px] text-white opacity-20">mail</span>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Sách Mới Section -->
+            <section id="new-arrivals" class="mt-stack-lg px-gutter scroll-mt-20">
+                <div class="flex justify-between items-end mb-stack-md">
+                    <h2 class="font-headline-md text-headline-md text-primary">Sách mới về</h2>
+                </div>
+                <div class="grid grid-cols-2 md:grid-cols-4 gap-gutter">
+                    @if (ViewBag.NewArrivals != null)
+                    {
+                        foreach (var book in (IEnumerable<BookVerse.Models.Book>)ViewBag.NewArrivals)
+                        {
+                            var imgUrl = string.IsNullOrWhiteSpace(book.Image) ? "https://images.unsplash.com/photo-1544947950-fa07a98d237f?auto=format&fit=crop&w=400&q=80" : book.Image;
+                            
+                            <div class="book-card-hover group relative bg-white border border-outline-variant rounded-xl p-4 transition-all hover:shadow-lg cursor-pointer book-card"
+                                 data-id="@book.BookId"
+                                 data-title="@book.Title"
+                                 data-author="@book.Author"
+                                 data-category="@(book.Category?.CategoryName ?? "Chưa phân loại")"
+                                 data-publisher="@(book.Publisher ?? "Đang cập nhật")"
+                                 data-price="@string.Format("{0:N0}", book.Price)"
+                                 data-image="@imgUrl"
+                                 data-quantity="@(book.Quantity ?? 0)"
+                                 data-description="@book.Description">
+                                <div class="relative mb-4 aspect-[3/4] overflow-hidden rounded-lg bg-surface-container-low">
+                                    <img src="@imgUrl" alt="@book.Title" class="w-full h-full object-cover">
+                                    <span class="absolute top-2 right-2 bg-secondary text-white text-[10px] font-bold px-2 py-1 rounded-full uppercase">Mới</span>
+                                    <div class="add-to-cart-btn absolute inset-x-0 bottom-0 p-4 opacity-0 transform translate-y-4 transition-all duration-300">
+                                        <button class="w-full bg-secondary text-white py-2 rounded-lg font-bold shadow-lg hover:bg-secondary-container hover:text-on-secondary-container transition-colors flex items-center justify-center gap-2" onclick="event.stopPropagation(); addToCart(@book.BookId);">
+                                            <span class="material-symbols-outlined text-[18px]">shopping_cart</span> Thêm vào giỏ
+                                        </button>
+                                    </div>
+                                </div>
+                                <h3 class="font-bold text-on-surface line-clamp-2 min-h-[40px] mb-1 group-hover:text-primary transition-colors">@book.Title</h3>
+                                <p class="text-label-md text-on-surface-variant mb-2">@book.Author</p>
+                                <div class="flex items-center gap-1 mb-2">
+                                    @for (int i = 0; i < 5; i++)
+                                    {
+                                        <span class="material-symbols-outlined text-[14px] text-tertiary-container filled-icon">star</span>
+                                    }
+                                </div>
+                                <div class="flex items-center gap-3">
+                                    <span class="text-primary font-bold">@string.Format("{0:N0}", book.Price)đ</span>
+                                </div>
+                            </div>
+                        }
+                    }
+                </div>
+            </section>
+        }
     </main>
     <!-- Footer -->
     <footer class="bg-surface-container-highest border-t border-outline-variant mt-stack-lg">
@@ -453,29 +586,91 @@
             </div>
         </div>
     </footer>
+    <!-- Book Detail Modal -->
+    <div id="bookDetailModal" class="fixed inset-0 z-50 hidden bg-black/60 backdrop-blur-sm flex items-center justify-center p-4 transition-opacity duration-300 opacity-0">
+        <div class="bg-white rounded-2xl max-w-2xl w-full max-h-[90vh] overflow-y-auto shadow-2xl border border-outline-variant transform translate-y-4 scale-95 transition-all duration-300 flex flex-col md:flex-row overflow-hidden relative">
+            <!-- Close Button -->
+            <button onclick="closeBookModal()" class="absolute top-4 right-4 w-8 h-8 rounded-full bg-black/10 hover:bg-black/20 flex items-center justify-center text-on-surface transition-all z-10 border-none">
+                <span class="material-symbols-outlined text-[18px]">close</span>
+            </button>
+            
+            <!-- Book Image Column -->
+            <div class="md:w-1/2 bg-surface-container-low flex items-center justify-center p-8 relative min-h-[300px]">
+                <img id="modalBookImage" src="" alt="Book Cover" class="max-w-[200px] w-full rounded-lg shadow-lg object-cover aspect-[3/4]">
+            </div>
+            
+            <!-- Book Info Column -->
+            <div class="md:w-1/2 p-8 flex flex-col justify-between">
+                <div>
+                    <span id="modalBookCategory" class="inline-block px-3 py-1 bg-primary-fixed text-on-primary-fixed-variant rounded-full text-label-md font-bold mb-3 uppercase tracking-wider"></span>
+                    <h2 id="modalBookTitle" class="font-headline-md text-headline-md text-primary mb-2 line-clamp-2"></h2>
+                    <p class="text-body-md text-on-surface mb-1">Tác giả: <span id="modalBookAuthor" class="font-bold"></span></p>
+                    <p class="text-body-sm text-on-surface-variant mb-4">Nhà xuất bản: <span id="modalBookPublisher"></span></p>
+                    
+                    <!-- Rating -->
+                    <div class="flex items-center gap-1 mb-4">
+                        <span class="material-symbols-outlined text-[16px] text-tertiary-container filled-icon">star</span>
+                        <span class="material-symbols-outlined text-[16px] text-tertiary-container filled-icon">star</span>
+                        <span class="material-symbols-outlined text-[16px] text-tertiary-container filled-icon">star</span>
+                        <span class="material-symbols-outlined text-[16px] text-tertiary-container filled-icon">star</span>
+                        <span class="material-symbols-outlined text-[16px] text-tertiary-container filled-icon">star</span>
+                        <span class="text-label-md text-on-surface-variant ml-1">(5.0)</span>
+                    </div>
+                    
+                    <!-- Description -->
+                    <div class="max-h-[120px] overflow-y-auto pr-2 mb-6">
+                        <p id="modalBookDescription" class="text-body-sm text-on-surface-variant leading-relaxed"></p>
+                    </div>
+                </div>
+                
+                <div>
+                    <div class="flex items-center justify-between mb-4 border-t border-outline-variant pt-4">
+                        <div>
+                            <p class="text-label-md text-on-surface-variant uppercase tracking-wider text-[10px]">Giá bán</p>
+                            <p id="modalBookPrice" class="text-headline-md font-bold text-primary"></p>
+                        </div>
+                        <div class="text-right">
+                            <p class="text-label-md text-on-surface-variant uppercase tracking-wider text-[10px]">Tình trạng</p>
+                            <p id="modalBookStatus" class="font-bold text-body-md"></p>
+                        </div>
+                    </div>
+                    
+                    <button id="modalAddToCartBtn" class="w-full bg-secondary text-white py-3 rounded-xl font-bold hover:bg-secondary-container hover:text-on-secondary-container transition-all flex items-center justify-center gap-2 shadow-md hover:shadow-lg border-none">
+                        <span class="material-symbols-outlined text-[20px]">shopping_cart</span> Thêm vào giỏ hàng
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <!-- FAB for Quick Scroll -->
-    <button class="fixed bottom-8 right-8 w-12 h-12 bg-primary text-white rounded-full shadow-lg flex items-center justify-center hover:scale-110 transition-transform z-40" onclick="window.scrollTo({top: 0, behavior: 'smooth'})">
+    <button class="fixed bottom-8 right-8 w-12 h-12 bg-primary text-white rounded-full shadow-lg flex items-center justify-center hover:scale-110 transition-transform z-40 border-none" onclick="window.scrollTo({top: 0, behavior: 'smooth'})">
         <span class="material-symbols-outlined">expand_less</span>
     </button>
     <script>
         // Micro-interactions and scroll effects
         window.addEventListener('scroll', () => {
             const header = document.querySelector('header');
-            if (window.scrollY > 20) {
-                header.classList.add('shadow-md');
-            } else {
-                header.classList.remove('shadow-md');
+            if (header) {
+                if (window.scrollY > 20) {
+                    header.classList.add('shadow-md');
+                } else {
+                    header.classList.remove('shadow-md');
+                }
             }
         });
 
         // Search bar interaction
-        const searchInput = document.querySelector('input[type="text"]');
-        searchInput.addEventListener('focus', () => {
-            searchInput.parentElement.classList.add('scale-[1.02]');
-        });
-        searchInput.addEventListener('blur', () => {
-            searchInput.parentElement.classList.remove('scale-[1.02]');
-        });
+        const searchInput = document.querySelector('input[name="search"]');
+        if (searchInput) {
+            searchInput.addEventListener('focus', () => {
+                searchInput.parentElement.classList.add('scale-[1.02]');
+            });
+            searchInput.addEventListener('blur', () => {
+                searchInput.parentElement.classList.remove('scale-[1.02]');
+            });
+        }
+        
         // Close user dropdown when clicking outside
         document.addEventListener('click', (e) => {
             const dropdown = document.getElementById('userDropdown');
@@ -483,6 +678,85 @@
                 document.getElementById('userMenu')?.classList.add('hidden');
             }
         });
+
+        // Book Modal Controls
+        const modal = document.getElementById('bookDetailModal');
+        const modalContent = modal.querySelector('.bg-white');
+        
+        function openBookModal(book) {
+            document.getElementById('modalBookImage').src = book.image;
+            document.getElementById('modalBookCategory').innerText = book.category;
+            document.getElementById('modalBookTitle').innerText = book.title;
+            document.getElementById('modalBookAuthor').innerText = book.author;
+            document.getElementById('modalBookPublisher').innerText = book.publisher;
+            document.getElementById('modalBookDescription').innerText = book.description;
+            document.getElementById('modalBookPrice').innerText = book.price + 'đ';
+            
+            const statusEl = document.getElementById('modalBookStatus');
+            if (book.quantity > 0) {
+                statusEl.innerText = 'Còn hàng (' + book.quantity + ')';
+                statusEl.className = 'font-bold text-secondary text-body-md';
+                document.getElementById('modalAddToCartBtn').disabled = false;
+                document.getElementById('modalAddToCartBtn').className = 'w-full bg-secondary text-white py-3 rounded-xl font-bold hover:bg-secondary-container hover:text-on-secondary-container transition-all flex items-center justify-center gap-2 shadow-md hover:shadow-lg border-none';
+            } else {
+                statusEl.innerText = 'Hết hàng';
+                statusEl.className = 'font-bold text-error text-body-md';
+                document.getElementById('modalAddToCartBtn').disabled = true;
+                document.getElementById('modalAddToCartBtn').className = 'w-full bg-outline text-white py-3 rounded-xl font-bold cursor-not-allowed flex items-center justify-center gap-2 border-none';
+            }
+            
+            document.getElementById('modalAddToCartBtn').onclick = () => {
+                addToCart(book.id);
+                closeBookModal();
+            };
+            
+            modal.classList.remove('hidden');
+            setTimeout(() => {
+                modal.classList.remove('opacity-0');
+                modal.classList.add('opacity-100');
+                modalContent.classList.remove('translate-y-4', 'scale-95');
+                modalContent.classList.add('translate-y-0', 'scale-100');
+            }, 50);
+        }
+        
+        function closeBookModal() {
+            modal.classList.remove('opacity-100');
+            modal.classList.add('opacity-0');
+            modalContent.classList.remove('translate-y-0', 'scale-100');
+            modalContent.classList.add('translate-y-4', 'scale-95');
+            setTimeout(() => {
+                modal.classList.add('hidden');
+            }, 300);
+        }
+        
+        // Close modal when clicking outside
+        modal.addEventListener('click', (e) => {
+            if (e.target === modal) {
+                closeBookModal();
+            }
+        });
+        
+        // Connect event listeners to book cards
+        document.querySelectorAll('.book-card').forEach(card => {
+            card.addEventListener('click', () => {
+                const id = card.getAttribute('data-id');
+                const title = card.getAttribute('data-title');
+                const author = card.getAttribute('data-author');
+                const category = card.getAttribute('data-category');
+                const publisher = card.getAttribute('data-publisher');
+                const price = card.getAttribute('data-price');
+                const image = card.getAttribute('data-image');
+                const quantity = parseInt(card.getAttribute('data-quantity') || '0');
+                const description = card.getAttribute('data-description') || 'Chưa có mô tả chi tiết cho cuốn sách này.';
+                
+                openBookModal({ id, title, author, category, publisher, price, image, quantity, description });
+            });
+        });
+        
+        // Add to Cart helper
+        function addToCart(bookId) {
+            alert('Đã thêm sách vào giỏ hàng thành công!');
+        }
     </script>
 </body>
 </html>
