@@ -125,12 +125,12 @@ namespace BookVerse.Controllers
         // GET /Account/Register
         // ─────────────────────────────────────────
         [HttpGet]
-        public IActionResult Register()
+        public IActionResult Register(string? email = null)
         {
             if (User.Identity?.IsAuthenticated == true)
                 return Redirect("/");
 
-            return View(new RegisterViewModel());
+            return View(new RegisterViewModel { Email = email ?? string.Empty });
         }
 
         // ─────────────────────────────────────────
