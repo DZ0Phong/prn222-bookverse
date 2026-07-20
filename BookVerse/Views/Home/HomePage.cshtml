@@ -172,6 +172,10 @@
                                 <span class="material-symbols-outlined text-[18px] text-on-surface-variant">receipt_long</span>
                                 Đơn hàng của tôi
                             </a>
+                            <a href="/Account/OrderHistory" class="flex items-center gap-2 px-4 py-3 text-on-surface hover:bg-surface-container transition-colors font-body-md text-body-md">
+                                <span class="material-symbols-outlined text-[18px] text-on-surface-variant">receipt_long</span>
+                                Trạng thái đơn hàng của tôi
+                            </a>
                             <div class="border-t border-outline-variant"></div>
                             <form method="post" action="/Account/Logout">
                                 @Html.AntiForgeryToken()
@@ -638,6 +642,11 @@
                     <button id="modalAddToCartBtn" class="w-full bg-secondary text-white py-3 rounded-xl font-bold hover:bg-secondary-container hover:text-on-secondary-container transition-all flex items-center justify-center gap-2 shadow-md hover:shadow-lg border-none">
                         <span class="material-symbols-outlined text-[20px]">shopping_cart</span> Thêm vào giỏ hàng
                     </button>
+                    <!-- THÊM NÚT NÀY VÀO NGAY PHÍA DƯỚI -->
+                    <a id="modalViewDetailBtn" href="#"
+                       class="w-full text-center border border-secondary text-secondary py-3 rounded-xl font-bold hover:bg-secondary hover:text-white transition-all block mt-2 shadow-sm">
+                        Xem chi tiết & Đánh giá
+                    </a>
                 </div>
             </div>
         </div>
@@ -709,6 +718,13 @@
                 addToCart(book.id);
                 closeBookModal();
             };
+
+            // --- ĐOẠN ĐƯỢC THÊM MỚI: Cập nhật Link cho nút Xem Chi Tiết ---
+            const viewDetailBtn = document.getElementById('modalViewDetailBtn');
+            if (viewDetailBtn) {
+                viewDetailBtn.href = '/User/Book/Detail/' + book.id;
+            }
+            // -------------------------------------------------------------
             
             modal.classList.remove('hidden');
             setTimeout(() => {
