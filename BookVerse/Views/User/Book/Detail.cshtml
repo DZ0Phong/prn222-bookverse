@@ -1,0 +1,474 @@
+﻿@model BookVerse.Models.ViewModels.User.BookDetailViewModel
+
+@{
+    ViewData["Title"] = Model.Book?.Title ?? "Chi tiết sách";
+    Layout = null;
+    var book = Model.Book;
+}
+
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>@ViewData["Title"] - Tiệm Sách Trí Tuệ</title>
+    <!-- Bootstrap 5 & Bootstrap Icons -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+
+    <style>
+        :root {
+            --primary-blue: #1e3a8a; /* Màu xanh navy chủ đạo */
+            --bg-light: #f8fafc;
+            --bg-footer: #eef2ff;
+            --text-dark: #1e293b;
+            --text-muted: #64748b;
+        }
+
+        body {
+            background-color: var(--bg-light);
+            color: var(--text-dark);
+            font-family: system-ui, -apple-system, sans-serif;
+        }
+
+        /* --- HEADER THEO MAU --- */
+        .main-header {
+            background: #ffffff;
+            border-bottom: 1px solid #e2e8f0;
+        }
+
+        .brand-title {
+            color: var(--primary-blue);
+            font-weight: 700;
+            font-size: 1.35rem;
+            text-decoration: none;
+        }
+
+        .search-box-custom {
+            background-color: #f1f5f9;
+            border: 1px solid #e2e8f0;
+            border-radius: 30px;
+            padding: 6px 16px 6px 40px;
+            font-size: 0.9rem;
+            width: 320px;
+        }
+
+        .search-wrapper {
+            position: relative;
+        }
+
+            .search-wrapper .bi-search {
+                position: absolute;
+                left: 15px;
+                top: 50%;
+                transform: translateY(-50%);
+                color: #94a3b8;
+            }
+
+        .nav-main-link {
+            color: var(--text-dark);
+            font-weight: 500;
+            text-decoration: none;
+            padding: 8px 4px;
+            font-size: 0.95rem;
+        }
+
+            .nav-main-link:hover, .nav-main-link.active {
+                color: var(--primary-blue);
+            }
+
+        /* Sub-navbar */
+        .sub-navbar {
+            background: #ffffff;
+            border-bottom: 1px solid #e2e8f0;
+            padding: 10px 0;
+            font-size: 0.85rem;
+        }
+
+            .sub-navbar a {
+                color: #475569;
+                text-decoration: none;
+                margin-right: 24px;
+            }
+
+                .sub-navbar a:hover {
+                    color: var(--primary-blue);
+                }
+
+        /* --- CARD CHI TIẾT SÁCH & REVIEWS --- */
+        .detail-card {
+            background: #ffffff;
+            border-radius: 12px;
+            border: 1px solid #e2e8f0;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+            padding: 24px;
+        }
+
+        .book-cover-img {
+            max-width: 100%;
+            max-height: 380px;
+            object-fit: cover;
+            border-radius: 10px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+        }
+
+        .btn-add-cart {
+            background-color: var(--primary-blue);
+            color: #ffffff;
+            font-weight: 600;
+            border-radius: 8px;
+            padding: 12px 20px;
+            border: none;
+            transition: all 0.2s;
+        }
+
+            .btn-add-cart:hover {
+                background-color: #1d4ed8;
+                color: #ffffff;
+            }
+
+        .badge-category {
+            background-color: #e0e7ff;
+            color: var(--primary-blue);
+            font-weight: 600;
+            font-size: 0.8rem;
+            padding: 6px 12px;
+            border-radius: 20px;
+        }
+
+        .price-text {
+            color: #dc2626;
+            font-size: 1.8rem;
+            font-weight: 800;
+        }
+
+        /* --- FOOTER CHUẨN --- */
+        .footer-custom {
+            background-color: var(--bg-footer);
+            color: #334155;
+            padding: 50px 0;
+            margin-top: 60px;
+            font-size: 0.9rem;
+        }
+
+        .footer-title {
+            color: var(--primary-blue);
+            font-weight: 700;
+            font-size: 1.1rem;
+            margin-bottom: 20px;
+        }
+
+        .footer-custom ul {
+            list-style: none;
+            padding-left: 0;
+        }
+
+            .footer-custom ul li {
+                margin-bottom: 10px;
+            }
+
+                .footer-custom ul li a {
+                    color: #475569;
+                    text-decoration: none;
+                }
+
+                    .footer-custom ul li a:hover {
+                        color: var(--primary-blue);
+                    }
+
+        .contact-item {
+            display: flex;
+            align-items: flex-start;
+            margin-bottom: 12px;
+            color: #475569;
+        }
+
+            .contact-item i {
+                color: var(--primary-blue);
+                font-size: 1.1rem;
+                margin-right: 12px;
+                margin-top: 2px;
+            }
+
+        .social-circle-btn {
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            border: 1px solid #cbd5e1;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            color: #475569;
+            margin-right: 8px;
+            text-decoration: none;
+            background: #fff;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Main Header -->
+    <header class="main-header py-3">
+        <div class="container d-flex align-items-center justify-content-between">
+            <a href="/" class="brand-title">Tiệm Sách Trí Tuệ</a>
+
+            <div class="search-wrapper">
+                <i class="bi bi-search"></i>
+                <input type="text" class="search-box-custom" placeholder="Tìm kiếm theo tên sách, tác giả...">
+            </div>
+
+            <div class="d-flex align-items-center gap-4">
+                <a href="/" class="nav-main-link">Trang chủ</a>
+                <a href="#" class="nav-main-link">Sách mới</a>
+                <a href="#" class="nav-main-link">Khuyến mãi</a>
+                <a href="#" class="nav-main-link">Bán chạy</a>
+            </div>
+
+            <div class="d-flex align-items-center gap-3">
+                <a href="#" class="text-secondary fs-5 position-relative">
+                    <i class="bi bi-heart"></i>
+                </a>
+                <a href="#" class="text-secondary fs-5 position-relative me-2">
+                    <i class="bi bi-cart3"></i>
+                    <span class="position-absolute top-0 start-100 translate-middle badge rounded-circle bg-danger" style="font-size: 0.6rem;">3</span>
+                </a>
+                <div class="dropdown">
+                    <a class="text-decoration-none text-dark fw-medium dropdown-toggle small" href="#" data-bs-toggle="dropdown">
+                        <i class="bi bi-person me-1"></i> Tài khoản
+                    </a>
+                    <ul class="dropdown-menu dropdown-menu-end fs-7">
+                        <li><a class="dropdown-item px-3 py-1 text-dark" href="/Account/OrderHistory">Đơn hàng của tôi</a></li>
+                        <li><hr class="dropdown-divider"></li>
+                        <li><a class="dropdown-item px-3 py-1 text-danger" href="#">Đăng xuất</a></li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Sub Navbar -->
+    <div class="sub-navbar">
+        <div class="container">
+            <a href="#">Văn học</a>
+            <a href="#">Kinh tế</a>
+            <a href="#">Kỹ năng sống</a>
+            <a href="#">Công nghệ thông tin</a>
+            <a href="#">Thiếu nhi</a>
+            <a href="#" class="text-secondary"><i class="bi bi-grid-3x3-gap me-1"></i> Tất cả sách</a>
+        </div>
+    </div>
+
+    <!-- Main Body: Chi tiết sách & Đánh giá -->
+    <div class="container my-4" style="min-height: 60vh;">
+        <!-- Nút quay lại -->
+        <div class="mb-3">
+            <a href="/" class="text-decoration-none text-secondary small fw-medium">
+                <i class="bi bi-arrow-left me-1"></i> Quay lại trang chủ
+            </a>
+        </div>
+
+        @if (book != null)
+        {
+            <!-- Card 1: Thông tin sách -->
+            <div class="detail-card mb-4">
+                <div class="row g-4 align-items-center">
+                    <!-- Ảnh Sách -->
+                    <div class="col-md-4 text-center">
+                        <img src="@(string.IsNullOrWhiteSpace(book.Image) ? "https://images.unsplash.com/photo-1544947950-fa07a98d237f?auto=format&fit=crop&w=400&q=80" : book.Image)"
+                             alt="@book.Title"
+                             class="book-cover-img img-fluid">
+                    </div>
+
+                    <!-- Chi tiết thông tin -->
+                    <div class="col-md-8">
+                        <div>
+                            <span class="badge-category mb-2 d-inline-block">
+                                @(book.Category?.CategoryName ?? "Chưa phân loại")
+                            </span>
+                            <h2 class="fw-bold text-dark mt-1 mb-2">@book.Title</h2>
+                            <p class="text-muted mb-1"><strong>Tác giả:</strong> @book.Author</p>
+                            <p class="text-muted mb-3"><strong>Nhà xuất bản:</strong> @(book.Publisher ?? "Đang cập nhật")</p>
+
+                            <div class="bg-light p-3 rounded-3 mb-3">
+                                <span class="price-text">@string.Format("{0:N0}", book.Price) ₫</span>
+                            </div>
+
+                            <div class="mb-4">
+                                <h6 class="fw-bold mb-1">Mô tả sản phẩm:</h6>
+                                <p class="text-secondary small leading-relaxed mb-0" style="white-space: pre-line;">@book.Description</p>
+                            </div>
+                        </div>
+
+                        <!-- Nút Thêm vào giỏ -->
+                        <div class="col-md-8">
+                            @if (book.Quantity > 0)
+                            {
+                                <button class="btn btn-add-cart w-full w-md-auto d-flex align-items-center justify-content-center gap-2"
+                                        onclick="addToCart(@book.BookId)">
+                                    <i class="bi bi-cart-plus fs-5"></i> Thêm vào giỏ hàng (Còn @book.Quantity cuốn)
+                                </button>
+                            }
+                            else
+                            {
+                                <button class="btn btn-secondary disabled w-full w-md-auto" disabled>
+                                    Hết hàng tạm thời
+                                </button>
+                            }
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Card 2: Bình luận & Đánh giá -->
+            <div class="detail-card">
+                <h5 class="fw-bold mb-4 d-flex align-items-center gap-2" style="color: var(--primary-blue);">
+                    <i class="bi bi-chat-square-quote"></i> Đánh giá từ độc giả
+                </h5>
+
+                <!-- HIỂN THỊ THÔNG BÁO KHI GỬI ĐÁNH GIÁ THÀNH CÔNG -->
+                @if (TempData["SuccessMessage"] != null)
+                {
+                    <div class="alert alert-success alert-dismissible fade show small" role="alert">
+                        <i class="bi bi-check-circle-fill me-2"></i> @TempData["SuccessMessage"]
+                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                    </div>
+                }
+
+                <!-- Form Nhận xét -->
+                <div class="bg-light p-3 rounded-3 border mb-4">
+                    <h6 class="fw-bold text-dark mb-3">Viết nhận xét của bạn</h6>
+
+                    @if (User.Identity != null && User.Identity.IsAuthenticated)
+                    {
+                        <form action="/Review/Create" method="post">
+                            @Html.AntiForgeryToken()
+                            <input type="hidden" name="BookId" value="@book.BookId" />
+
+                            <div class="row g-3">
+                                <div class="col-md-3">
+                                    <label class="form-label small fw-medium">Chấm điểm sao:</label>
+                                    <select name="Rating" class="form-select form-select-sm fw-semibold">
+                                        <option value="5">⭐⭐⭐⭐⭐ 5 Sao</option>
+                                        <option value="4">⭐⭐⭐⭐ 4 Sao</option>
+                                        <option value="3">⭐⭐⭐ 3 Sao</option>
+                                        <option value="2">⭐⭐ 2 Sao</option>
+                                        <option value="1">⭐ 1 Sao</option>
+                                    </select>
+                                </div>
+                                <div class="col-12">
+                                    <label class="form-label small fw-medium">Nội dung bình luận:</label>
+                                    <textarea name="Comment" rows="3" required placeholder="Chia sẻ cảm nghĩ của bạn về cuốn sách này..." class="form-control form-control-sm"></textarea>
+                                </div>
+                                <div class="col-12">
+                                    <button type="submit" class="btn btn-sm btn-primary fw-bold" style="background-color: var(--primary-blue); border: none;">
+                                        Gửi đánh giá
+                                    </button>
+                                </div>
+                            </div>
+                        </form>
+                    }
+                    else
+                    {
+                        <div class="text-center py-2 text-muted small">
+                            Bạn cần <a href="/Account/Login" class="fw-bold text-decoration-none" style="color: var(--primary-blue);">Đăng nhập</a> để bình luận.
+                        </div>
+                    }
+                </div>
+
+                <!-- Danh sách bình luận -->
+                <div class="review-list">
+                    @if (Model.ExistingReviews != null && Model.ExistingReviews.Any())
+                    {
+                        foreach (var r in Model.ExistingReviews)
+                        {
+                            <div class="border-bottom pb-3 mb-3 last:border-0">
+                                <div class="d-flex justify-content-between align-items-center mb-1">
+                                    <div>
+                                        <span class="fw-bold small text-dark me-2">@(r.User?.FullName ?? "Độc giả ẩn danh")</span>
+                                        <span class="text-warning small">
+                                            @string.Concat(Enumerable.Repeat("⭐", r.Rating ?? 5))
+                                        </span>
+                                    </div>
+                                    <span class="text-muted" style="font-size: 0.75rem;">@r.CreatedAt?.ToString("dd/MM/yyyy HH:mm")</span>
+                                </div>
+                                <p class="small text-secondary mb-0">@r.Comment</p>
+                            </div>
+                        }
+                    }
+                    else
+                    {
+                        <div class="text-center py-4 text-muted small">
+                            <i class="bi bi-chat-left-dots d-block fs-3 mb-2 opacity-50"></i>
+                            Chưa có lượt đánh giá nào cho cuốn sách này. Hãy là người đầu tiên!
+                        </div>
+                    }
+                </div>
+            </div>
+        }
+        else
+        {
+            <div class="alert alert-warning text-center">
+                Không tìm thấy thông tin cuốn sách này!
+            </div>
+        }
+    </div>
+
+    <!-- Footer chuẩn màu xanh loãng -->
+    <footer class="footer-custom">
+        <div class="container">
+            <div class="row g-4">
+                <div class="col-md-4">
+                    <div class="footer-title">Tiệm Sách Trí Tuệ</div>
+                    <p class="text-secondary lh-lg" style="font-size: 0.85rem;">
+                        Lan tỏa tri thức, kết nối đam mê. Chúng tôi tự hào mang đến những đầu sách chọn lọc nhất cho độc giả Việt.
+                    </p>
+                    <div class="mt-3">
+                        <a href="#" class="social-circle-btn"><i class="bi bi-facebook"></i></a>
+                        <a href="#" class="social-circle-btn"><i class="bi bi-share"></i></a>
+                    </div>
+                </div>
+                <div class="col-md-2 offset-md-1">
+                    <div class="fw-bold text-dark mb-3">Về chúng tôi</div>
+                    <ul>
+                        <li><a href="#">Giới thiệu</a></li>
+                        <li><a href="#">Liên hệ</a></li>
+                        <li><a href="#">Tuyển dụng</a></li>
+                        <li><a href="#">Tin tức</a></li>
+                    </ul>
+                </div>
+                <div class="col-md-2">
+                    <div class="fw-bold text-dark mb-3">Hỗ trợ khách hàng</div>
+                    <ul>
+                        <li><a href="#">Chính sách bảo mật</a></li>
+                        <li><a href="#">Điều khoản sử dụng</a></li>
+                        <li><a href="#">Vận chuyển & Giao hàng</a></li>
+                        <li><a href="#">Chính sách đổi trả</a></li>
+                    </ul>
+                </div>
+                <div class="col-md-3">
+                    <div class="fw-bold text-dark mb-3">Liên hệ</div>
+                    <div class="contact-item">
+                        <i class="bi bi-geo-alt"></i>
+                        <span>Số 123, Đường Láng, Đống Đa, Hà Nội</span>
+                    </div>
+                    <div class="contact-item">
+                        <i class="bi bi-telephone"></i>
+                        <span>1900 1234</span>
+                    </div>
+                    <div class="contact-item">
+                        <i class="bi bi-envelope"></i>
+                        <span>support@trituebooks.vn</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        function addToCart(bookId) {
+            alert('Đã thêm sách vào giỏ hàng!');
+        }
+    </script>
+</body>
+</html>

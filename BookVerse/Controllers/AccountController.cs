@@ -1,5 +1,6 @@
 using BookVerse.Models;
 using BookVerse.Models.ViewModels;
+using BookVerse.Models.ViewModels.User;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authorization;
@@ -209,6 +210,41 @@ namespace BookVerse.Controllers
         public IActionResult AccessDenied()
         {
             return View();
+        }
+
+
+
+        // ─────────────────────────────────────────
+        // GET /Account/OrderHistory
+        // ─────────────────────────────────────────
+        [HttpGet]
+        [Authorize]
+        public async Task<IActionResult> OrderHistory()
+        {
+            // Lấy UserId của tài khoản đang đăng nhập từ Claims
+            var userIdClaim = User.FindFirst(ClaimTypes.NameIdentifier)?.Value ?? User.FindFirst("UserId")?.Value;
+            if (string.IsNullOrEmpty(userIdClaim) || !int.TryParse(userIdClaim, out int userId))
+            {
+                return RedirectToAction("Login");
+            }
+
+            // Lấy dữ liệu và map trực tiếp sang UserOrderListViewModel
+            var orders = await _context.Orders
+                .Include(o => o.OrderDetails)
+                .Where(o => o.UserId == userId)
+                .OrderByDescending(o => o.CreatedAt)
+                .Select(o => new UserOrderListViewModel
+                {
+                    OrderId = o.OrderId,
+                    CreatedAt = o.CreatedAt,
+                    TotalItems = o.OrderDetails.Sum(d => d.Quantity ?? 0),
+                    TotalAmount = o.TotalAmount ?? 0,
+                    Status = o.Status,
+                    PaymentStatus = o.PaymentStatus
+                })
+                .ToListAsync();
+
+            return View(orders);
         }
     }
 }
