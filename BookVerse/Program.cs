@@ -2,6 +2,11 @@ using BookVerse.Models;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Mvc.Razor;
 using Microsoft.EntityFrameworkCore;
+using BookVerse.Configuration;
+using BookVerse.Localization;
+using BookVerse.Payments;
+using BookVerse.Commerce;
+using Microsoft.AspNetCore.DataProtection;
 
 namespace BookVerse
 {
@@ -10,6 +15,17 @@ namespace BookVerse
         public static void Main(string[] args)
         {
             var builder = WebApplication.CreateBuilder(args);
+
+            // Buyer-editable settings live outside source code. reloadOnChange lets an
+            // administrator update the JSON files without rebuilding the application.
+            builder.Configuration
+                .AddJsonFile("Config/site-settings.json", optional: false, reloadOnChange: true)
+                .AddJsonFile("Config/vnpay.json", optional: false, reloadOnChange: true)
+                .AddEnvironmentVariables();
+
+            builder.Logging.ClearProviders();
+            builder.Logging.AddConsole();
+            builder.Logging.AddDebug();
 
             // Add services to the container.
             builder.Services.AddControllersWithViews()
@@ -22,6 +38,16 @@ namespace BookVerse
 
             builder.Services.AddDbContext<QuanLyBanSachContext>(options =>
                 options.UseSqlServer(builder.Configuration.GetConnectionString("MyCnn")));
+
+            builder.Services.Configure<SiteSettings>(builder.Configuration.GetSection("SiteSettings"));
+            builder.Services.Configure<VnPayOptions>(builder.Configuration.GetSection("VnPay"));
+            builder.Services.AddHttpContextAccessor();
+            builder.Services.AddSingleton<IJsonLocalizer, JsonLocalizer>();
+            builder.Services.AddScoped<IVnPayService, VnPayService>();
+            builder.Services.AddScoped<ICommercePricingService, CommercePricingService>();
+            builder.Services.AddDataProtection()
+                .SetApplicationName("BookVerse")
+                .PersistKeysToFileSystem(new DirectoryInfo(Path.Combine(builder.Environment.ContentRootPath, ".data-protection-keys")));
 
             // Cookie Authentication
             builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)

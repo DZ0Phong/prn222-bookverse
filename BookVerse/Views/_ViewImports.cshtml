@@ -1,4 +1,9 @@
 @using BookVerse
 @using BookVerse.Models
 @using BookVerse.Models.ViewModels.Admin
+@using BookVerse.Localization
+@using BookVerse.Configuration
+@using Microsoft.Extensions.Options
 @addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
+@inject IJsonLocalizer T
+@inject IOptions<SiteSettings> SiteOptions

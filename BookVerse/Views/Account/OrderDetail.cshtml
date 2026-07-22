@@ -1,0 +1,31 @@
+@model BookVerse.Models.ViewModels.User.UserOrderDetailViewModel
+@using BookVerse.Domain
+@{ ViewData["Title"] = T["Order.Detail"]; }
+
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h1 class="h3">@T["Order.Detail"] #@Model.OrderId</h1>
+    <div>
+        <a class="btn btn-outline-secondary" href="/Account/OrderHistory">@T["Order.History"]</a>
+        @if (Model.PaymentMethod == OrderValues.PaymentMethod.VnPay && Model.PaymentStatus != OrderValues.PaymentStatus.Paid)
+        {
+            <form method="post" action="/Payment/Retry" class="d-inline">
+                @Html.AntiForgeryToken()
+                <input type="hidden" name="orderId" value="@Model.OrderId" />
+                <button class="btn btn-primary ms-2" type="submit">@T["Payment.Retry"]</button>
+            </form>
+        }
+    </div>
+</div>
+
+<div class="row g-4">
+    <div class="col-lg-8">
+        <div class="card shadow-sm"><div class="table-responsive"><table class="table align-middle mb-0">
+            <thead><tr><th>@T["Order.Items"]</th><th>@T["Common.Price"]</th><th>@T["Common.Quantity"]</th><th>@T["Common.Total"]</th></tr></thead>
+            <tbody>@foreach (var item in Model.Items) { <tr><td><a href="/User/Book/Detail/@item.BookId">@item.BookTitle</a></td><td>@item.Price.ToString("N0") ₫</td><td>@item.Quantity</td><td>@item.Subtotal.ToString("N0") ₫</td></tr> }</tbody>
+        </table></div></div>
+    </div>
+    <div class="col-lg-4"><div class="card card-body shadow-sm">
+        <dl><dt>@T["Order.CreatedAt"]</dt><dd>@Model.CreatedAt?.ToString("dd/MM/yyyy HH:mm")</dd><dt>@T["Common.Status"]</dt><dd>@Model.Status</dd><dt>@T["Common.Payment"]</dt><dd>@Model.PaymentMethod · @Model.PaymentStatus</dd><dt>@T["Order.ShippingAddress"]</dt><dd>@Model.ShippingAddress</dd><dt>@T["Order.Phone"]</dt><dd>@Model.PhoneNumber</dd></dl>
+        <hr/><div class="d-flex justify-content-between h5"><span>@T["Common.Total"]</span><strong>@Model.TotalAmount.ToString("N0") ₫</strong></div>
+    </div></div>
+</div>

@@ -1,0 +1,11 @@
+@model SiteSettingsViewModel
+@{ ViewData["Title"] = "Cài đặt hệ thống"; ViewData["ActiveMenu"] = "Settings"; Layout = "_AdminLayout"; }
+<div class="mb-4"><h1 class="h3 mb-1">Cài đặt hệ thống</h1><p class="text-muted">Thay đổi hoạt động cửa hàng mà không cần sửa code.</p></div>
+@if (TempData["Success"] is string message) { <div class="alert alert-success">@message</div> }
+<form method="post" class="card shadow-sm"><div class="card-body"><div asp-validation-summary="ModelOnly" class="text-danger"></div><div class="row g-3">
+<div class="col-md-6"><label asp-for="BrandName" class="form-label">Tên cửa hàng</label><input asp-for="BrandName" class="form-control"/></div><div class="col-md-6"><label asp-for="SupportEmail" class="form-label">Email hỗ trợ</label><input asp-for="SupportEmail" class="form-control"/></div>
+<div class="col-md-6"><label asp-for="Hotline" class="form-label">Hotline</label><input asp-for="Hotline" class="form-control"/></div><div class="col-md-6"><label asp-for="Address" class="form-label">Địa chỉ</label><input asp-for="Address" class="form-control"/></div>
+<div class="col-md-3"><label asp-for="ShippingFee" class="form-label">Phí giao hàng</label><input asp-for="ShippingFee" class="form-control"/></div><div class="col-md-3"><label asp-for="FreeShippingThreshold" class="form-label">Miễn phí ship từ</label><input asp-for="FreeShippingThreshold" class="form-control"/></div>
+<div class="col-md-3"><label asp-for="MaxQuantityPerCartItem" class="form-label">SL tối đa/mặt hàng</label><input asp-for="MaxQuantityPerCartItem" class="form-control"/></div><div class="col-md-3"><label asp-for="PaymentTimeoutMinutes" class="form-label">Hạn thanh toán (phút)</label><input asp-for="PaymentTimeoutMinutes" class="form-control"/></div>
+<div class="col-md-3"><label asp-for="CurrencyCode" class="form-label">Mã tiền tệ</label><input asp-for="CurrencyCode" class="form-control"/></div><div class="col-md-3 form-check mt-5 ms-3"><input asp-for="EnableCod" class="form-check-input"/><label asp-for="EnableCod">Bật COD</label></div><div class="col-md-3 form-check mt-5"><input asp-for="EnableVnPay" class="form-check-input"/><label asp-for="EnableVnPay">Bật VNPay</label></div>
+</div></div><div class="card-footer text-end"><button class="btn btn-primary" type="submit">Lưu cấu hình</button></div></form>

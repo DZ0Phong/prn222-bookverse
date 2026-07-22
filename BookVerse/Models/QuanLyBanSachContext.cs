@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using Microsoft.EntityFrameworkCore;
+using BookVerse.Domain;
 
 namespace BookVerse.Models;
 
@@ -36,8 +37,6 @@ public partial class QuanLyBanSachContext : DbContext
     public virtual DbSet<Wishlist> Wishlists { get; set; }
 
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder) { }
-#warning To protect potentially sensitive information in your connection string, you should move it out of source code. You can avoid scaffolding the connection string by using the Name= syntax to read it from configuration - see https://go.microsoft.com/fwlink/?linkid=2131148. For more guidance on storing connection strings, see https://go.microsoft.com/fwlink/?LinkId=723263.
-       // => optionsBuilder.UseSqlServer("Server=localhost;Database=QuanLyBanSach;User Id=sa;Password=123456;Encrypt=True;TrustServerCertificate=True;");
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -95,15 +94,15 @@ public partial class QuanLyBanSachContext : DbContext
                 .HasColumnType("datetime");
             entity.Property(e => e.PaymentMethod)
                 .HasMaxLength(50)
-                .HasDefaultValue("COD");
+                .HasDefaultValue(OrderValues.PaymentMethod.Cod);
             entity.Property(e => e.PaymentStatus)
                 .HasMaxLength(50)
-                .HasDefaultValue("Chua thanh toan");
+                .HasDefaultValue(OrderValues.PaymentStatus.Unpaid);
             entity.Property(e => e.PhoneNumber).HasMaxLength(20);
             entity.Property(e => e.ShippingAddress).HasMaxLength(255);
             entity.Property(e => e.Status)
                 .HasMaxLength(50)
-                .HasDefaultValue("Cho xu ly");
+                .HasDefaultValue(OrderValues.Status.Pending);
             entity.Property(e => e.TotalAmount).HasColumnType("decimal(18, 0)");
 
             entity.HasOne(d => d.User).WithMany(p => p.Orders)
@@ -137,7 +136,7 @@ public partial class QuanLyBanSachContext : DbContext
             entity.Property(e => e.CreatedAt)
                 .HasDefaultValueSql("(getdate())")
                 .HasColumnType("datetime");
-            entity.Property(e => e.IsApproved).HasDefaultValue(true);
+            entity.Property(e => e.IsApproved).HasDefaultValue(false);
 
             entity.HasOne(d => d.Book).WithMany(p => p.Reviews)
                 .HasForeignKey(d => d.BookId)

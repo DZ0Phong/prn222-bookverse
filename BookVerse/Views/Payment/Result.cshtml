@@ -1,0 +1,3 @@
+@model BookVerse.Models.ViewModels.User.PaymentResultViewModel
+@{ ViewData["Title"] = T[Model.MessageKey]; }
+<div class="card card-body shadow-sm text-center py-5 mx-auto" style="max-width:650px"><i class="bi @(Model.Success ? "bi-check-circle-fill text-success" : "bi-x-circle-fill text-danger") display-3"></i><h1 class="h3 mt-3">@T[Model.MessageKey]</h1>@if(Model.OrderId.HasValue){<p>@T["Common.Order"] #@Model.OrderId</p><a class="btn btn-primary" href="/Account/OrderDetail/@Model.OrderId">@T["Common.Details"]</a>}<a class="btn btn-outline-secondary mt-2" href="/">@T["Common.Home"]</a></div>

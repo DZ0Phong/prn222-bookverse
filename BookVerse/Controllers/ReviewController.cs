@@ -1,6 +1,7 @@
 ﻿using System.Security.Claims;
 using BookVerse.Models;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 
 namespace BookVerse.Controllers
 {
@@ -18,18 +19,19 @@ namespace BookVerse.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create(int BookId, int Rating, string Comment)
         {
-            if (!User.Identity.IsAuthenticated)
+            if (User.Identity?.IsAuthenticated != true)
             {
                 return RedirectToAction("Login", "Account");
             }
 
-            if (BookId <= 0 || string.IsNullOrWhiteSpace(Comment))
+            if (BookId <= 0 || Rating is < 1 or > 5 || string.IsNullOrWhiteSpace(Comment) || Comment.Length > 2000)
             {
                 return RedirectToAction("Detail", "Book", new { id = BookId });
             }
 
             var userIdString = User.FindFirstValue(ClaimTypes.NameIdentifier);
-            int.TryParse(userIdString, out int userId);
+            if (!int.TryParse(userIdString, out int userId)) return Challenge();
+            if (!await _context.Books.AnyAsync(b => b.BookId == BookId && b.IsActive != false)) return NotFound();
 
             var newReview = new Review
             {

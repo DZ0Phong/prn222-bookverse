@@ -7,7 +7,7 @@
 <head>
     <meta charset="utf-8" />
     <meta content="width=device-width, initial-scale=1.0" name="viewport" />
-    <title>Đăng nhập | Tiệm Sách Trí Tuệ</title>
+    <title>Đăng nhập | @SiteOptions.Value.BrandName</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&amp;display=swap" rel="stylesheet" />
     <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet" />
     <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet" />
@@ -144,7 +144,7 @@
                 <div class="w-14 h-14 bg-primary rounded-lg flex items-center justify-center mb-4 shadow-md">
                     <span class="material-symbols-outlined text-on-primary text-[32px]">menu_book</span>
                 </div>
-                <h1 class="font-headline-md text-headline-md text-primary tracking-tight">Tiệm Sách Trí Tuệ</h1>
+                <h1 class="font-headline-md text-headline-md text-primary tracking-tight">@SiteOptions.Value.BrandName</h1>
                 <p class="font-body-md text-body-md text-on-surface-variant mt-2">Chào mừng bạn quay trở lại</p>
             </div>
             <!-- Login Form -->
@@ -204,7 +204,7 @@
     </main>
     <!-- Simple Footer (Suppressed based on "Transactional" rule, but included minimal copyright for legal compliance) -->
     <footer class="py-6 text-center">
-        <p class="font-label-md text-label-md text-outline">© 2024 Tiệm Sách Trí Tuệ. All rights reserved.</p>
+        <p class="font-label-md text-label-md text-outline">© @DateTime.Now.Year @SiteOptions.Value.BrandName. All rights reserved.</p>
     </footer>
     <script>
         // Password Visibility Toggle Logic
@@ -237,5 +237,6 @@
             }
         });
     </script>
+    <script src="~/js/localization.js" asp-append-version="true"></script>
 </body>
 </html>

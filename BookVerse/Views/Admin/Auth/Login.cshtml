@@ -7,7 +7,7 @@
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Đăng nhập Admin - BookVerse</title>
+    <title>Đăng nhập Admin - @SiteOptions.Value.BrandName</title>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" />
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" />
     <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
@@ -24,7 +24,7 @@
         </div>
 
         <h1 class="login-title">Chào mừng trở lại!</h1>
-        <p class="login-subtitle">Đăng nhập vào trang quản trị <strong class="text-accent">BookVerse</strong></p>
+        <p class="login-subtitle">Đăng nhập vào trang quản trị <strong class="text-accent">@SiteOptions.Value.BrandName</strong></p>
 
         <!-- Alert Error -->
         @if (!string.IsNullOrEmpty(ViewBag.Error))
@@ -125,5 +125,6 @@
         btn.innerHTML = '<span class="spinner-border spinner-border-sm me-2"></span>Đang đăng nhập...';
     });
 </script>
+<script src="~/js/localization.js" asp-append-version="true"></script>
 </body>
 </html>

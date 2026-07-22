@@ -8,3 +8,6 @@ obj/
 # User files
 *.user
 *.suo
+.dotnet_home/
+.nuget/
+BookVerse/.data-protection-keys/

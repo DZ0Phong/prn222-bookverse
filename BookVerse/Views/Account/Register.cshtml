@@ -3,11 +3,11 @@
     Layout = null;
 }
 <!DOCTYPE html>
-<html class="light" lang="vi">
+<html class="light" lang="@(Context.Request.Cookies["bookverse.culture"] ?? "en")">
 <head>
     <meta charset="utf-8" />
     <meta content="width=device-width, initial-scale=1.0" name="viewport" />
-    <title>Đăng ký - Tiệm Sách Trí Tuệ</title>
+    <title>@T["Auth.Register"] - @SiteOptions.Value.BrandName</title>
     <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@100..900&family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet" />
     <style>
@@ -57,13 +57,13 @@
                 <div class="inline-flex items-center justify-center w-16 h-16 rounded-2xl bg-primary mb-4 shadow-lg">
                     <span class="material-symbols-outlined text-white text-[32px]">menu_book</span>
                 </div>
-                <h2 class="font-headline-lg text-headline-lg text-primary">Tiệm Sách Trí Tuệ</h2>
-                <p class="font-body-md text-body-md text-on-surface-variant mt-2">Nuôi dưỡng tri thức thông qua từng trang sách.</p>
+                <h2 class="font-headline-lg text-headline-lg text-primary">@SiteOptions.Value.BrandName</h2>
+                <p class="font-body-md text-body-md text-on-surface-variant mt-2">@T["Auth.Tagline"]</p>
             </div>
 
             <!-- Card -->
             <div class="glass-card p-8 rounded-xl shadow-xl border border-outline-variant">
-                <h1 class="font-headline-md text-headline-md text-on-surface text-center mb-6">Tạo tài khoản mới</h1>
+                <h1 class="font-headline-md text-headline-md text-on-surface text-center mb-6">@T["Auth.RegisterTitle"]</h1>
 
                 <!-- Error Message -->
                 @if (!string.IsNullOrEmpty(Model?.ErrorMessage))
@@ -75,11 +75,12 @@
                 }
 
                 <form asp-controller="Account" asp-action="Register" method="post" class="space-y-5" id="registerForm">
+                    <input asp-for="ReturnUrl" type="hidden" />
                     @Html.AntiForgeryToken()
 
                     <!-- Họ tên -->
                     <div class="space-y-1.5">
-                        <label class="font-label-md text-label-md text-on-surface-variant block uppercase tracking-wider" for="FullName">Họ tên</label>
+                        <label class="font-label-md text-label-md text-on-surface-variant block uppercase tracking-wider" for="FullName">@T["Auth.FullName"]</label>
                         <div class="relative group">
                             <span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-outline group-focus-within:text-primary transition-colors">person</span>
                             <input asp-for="FullName" class="w-full pl-10 pr-4 py-3 bg-white border border-outline-variant rounded-lg focus:ring-2 focus:ring-primary focus:border-primary outline-none transition-all font-body-md text-body-md" placeholder="Nguyễn Văn A" />
@@ -98,7 +99,7 @@
                             <span asp-validation-for="Email" class="text-error text-xs"></span>
                         </div>
                         <div class="space-y-1.5">
-                            <label class="font-label-md text-label-md text-on-surface-variant block uppercase tracking-wider" for="Phone">SĐT</label>
+                            <label class="font-label-md text-label-md text-on-surface-variant block uppercase tracking-wider" for="Phone">@T["Auth.Phone"]</label>
                             <div class="relative group">
                                 <span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-outline group-focus-within:text-primary transition-colors">call</span>
                                 <input asp-for="Phone" type="tel" class="w-full pl-10 pr-4 py-3 bg-white border border-outline-variant rounded-lg focus:ring-2 focus:ring-primary focus:border-primary outline-none transition-all font-body-md text-body-md" placeholder="0901234567" />
@@ -109,7 +110,7 @@
 
                     <!-- Password -->
                     <div class="space-y-1.5">
-                        <label class="font-label-md text-label-md text-on-surface-variant block uppercase tracking-wider" for="Password">Mật khẩu</label>
+                        <label class="font-label-md text-label-md text-on-surface-variant block uppercase tracking-wider" for="Password">@T["Auth.Password"]</label>
                         <div class="relative group">
                             <span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-outline group-focus-within:text-primary transition-colors">lock</span>
                             <input asp-for="Password" id="Password" type="password" class="w-full pl-10 pr-12 py-3 bg-white border border-outline-variant rounded-lg focus:ring-2 focus:ring-primary focus:border-primary outline-none transition-all font-body-md text-body-md" placeholder="•••••••• (tối thiểu 6 ký tự)" autocomplete="new-password" />
@@ -122,7 +123,7 @@
 
                     <!-- Confirm Password -->
                     <div class="space-y-1.5">
-                        <label class="font-label-md text-label-md text-on-surface-variant block uppercase tracking-wider" for="ConfirmPassword">Xác nhận mật khẩu</label>
+                        <label class="font-label-md text-label-md text-on-surface-variant block uppercase tracking-wider" for="ConfirmPassword">@T["Auth.ConfirmPassword"]</label>
                         <div class="relative group">
                             <span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-outline group-focus-within:text-primary transition-colors">lock_reset</span>
                             <input asp-for="ConfirmPassword" id="ConfirmPassword" type="password" class="w-full pl-10 pr-4 py-3 bg-white border border-outline-variant rounded-lg focus:ring-2 focus:ring-primary focus:border-primary outline-none transition-all font-body-md text-body-md" placeholder="••••••••" autocomplete="new-password" />
@@ -132,18 +133,18 @@
 
                     <!-- Register Button -->
                     <button id="registerBtn" class="w-full py-4 bg-primary text-white font-headline-sm text-headline-sm rounded-lg shadow-lg hover:bg-primary-container hover:shadow-xl transition-all duration-200 active:scale-[0.98] mt-6" type="submit">
-                        Đăng ký
+                        @T["Auth.Register"]
                     </button>
 
                     <!-- Divider & Login link -->
                     <div class="flex items-center my-4">
                         <div class="flex-grow border-t border-outline-variant"></div>
-                        <span class="px-4 font-label-md text-label-md text-outline">HOẶC</span>
+                        <span class="px-4 font-label-md text-label-md text-outline">@T["Auth.Or"]</span>
                         <div class="flex-grow border-t border-outline-variant"></div>
                     </div>
                     <p class="text-center font-body-md text-body-md text-on-surface-variant">
-                        Bạn đã có tài khoản?
-                        <a class="text-primary font-bold hover:underline ml-1" href="/Account/Login">Đăng nhập</a>
+                        @T["Auth.HaveAccount"]
+                        <a class="text-primary font-bold hover:underline ml-1" href="/Account/Login?returnUrl=@Uri.EscapeDataString(Model?.ReturnUrl ?? string.Empty)">@T["Auth.LoginTitle"]</a>
                     </p>
                 </form>
             </div>
@@ -151,7 +152,7 @@
     </main>
 
     <footer class="w-full py-6 text-center text-on-surface-variant font-body-md text-body-md">
-        <p>© 2024 Tiệm Sách Trí Tuệ. All rights reserved.</p>
+        <p>© @DateTime.Now.Year @SiteOptions.Value.BrandName. All rights reserved.</p>
     </footer>
 
     <script>
@@ -184,5 +185,6 @@
             btn.innerHTML = '<span class="material-symbols-outlined animate-spin">progress_activity</span>';
         });
     </script>
+    <script src="~/js/localization.js" asp-append-version="true"></script>
 </body>
 </html>

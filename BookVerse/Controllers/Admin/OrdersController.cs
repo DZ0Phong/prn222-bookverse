@@ -2,6 +2,7 @@ using BookVerse.Models;
 using BookVerse.Models.ViewModels.Admin;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using BookVerse.Domain;
 
 namespace BookVerse.Controllers.Admin
 {
@@ -29,10 +30,10 @@ namespace BookVerse.Controllers.Admin
 
             // Tab counts (before filtering)
             var countAll = await _context.Orders.CountAsync();
-            var countPending = await _context.Orders.CountAsync(o => o.Status == "Chờ xử lý");
-            var countShipping = await _context.Orders.CountAsync(o => o.Status == "Đang giao");
-            var countDelivered = await _context.Orders.CountAsync(o => o.Status == "Đã giao");
-            var countCancelled = await _context.Orders.CountAsync(o => o.Status == "Đã hủy");
+            var countPending = await _context.Orders.CountAsync(o => o.Status == OrderValues.Status.Pending);
+            var countShipping = await _context.Orders.CountAsync(o => o.Status == OrderValues.Status.Shipping);
+            var countDelivered = await _context.Orders.CountAsync(o => o.Status == OrderValues.Status.Delivered);
+            var countCancelled = await _context.Orders.CountAsync(o => o.Status == OrderValues.Status.Cancelled);
 
             // Filter by status
             if (!string.IsNullOrEmpty(status))
@@ -151,23 +152,23 @@ namespace BookVerse.Controllers.Admin
             if (order == null)
                 return Json(new { success = false, message = "Không tìm thấy đơn hàng" });
 
-            var allowed = new[] { "Chờ xử lý", "Đang giao", "Đã giao", "Đã hủy" };
+            var allowed = new[] { OrderValues.Status.Pending, OrderValues.Status.Shipping, OrderValues.Status.Delivered, OrderValues.Status.Cancelled };
             if (!allowed.Contains(newStatus))
                 return Json(new { success = false, message = "Trạng thái không hợp lệ" });
 
             // Business logic: Can't go back from Delivered or Cancelled
-            if (order.Status == "Đã giao" || order.Status == "Đã hủy")
+            if (order.Status == OrderValues.Status.Delivered || order.Status == OrderValues.Status.Cancelled)
                 return Json(new { success = false, message = "Không thể thay đổi trạng thái đơn đã hoàn thành hoặc đã hủy" });
 
             order.Status = newStatus;
 
             // If order is cancelled, update payment status
-            if (newStatus == "Đã hủy")
-                order.PaymentStatus = "Đã hủy";
+            if (newStatus == OrderValues.Status.Cancelled)
+                order.PaymentStatus = OrderValues.PaymentStatus.Cancelled;
 
             // If delivered, mark as paid
-            if (newStatus == "Đã giao" && order.PaymentMethod == "COD")
-                order.PaymentStatus = "Đã thanh toán";
+            if (newStatus == OrderValues.Status.Delivered && order.PaymentMethod == OrderValues.PaymentMethod.Cod)
+                order.PaymentStatus = OrderValues.PaymentStatus.Paid;
 
             await _context.SaveChangesAsync();
 

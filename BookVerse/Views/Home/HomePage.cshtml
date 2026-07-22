@@ -7,7 +7,7 @@
 <head>
     <meta charset="utf-8" />
     <meta content="width=device-width, initial-scale=1.0" name="viewport" />
-    <title>Tiệm Sách Trí Tuệ | Trang chủ</title>
+    <title>@SiteOptions.Value.BrandName | Trang chủ</title>
     <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;display=swap" rel="stylesheet" />
     <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet" />
@@ -122,7 +122,7 @@
     <header class="bg-surface sticky top-0 z-50 border-b border-outline-variant shadow-sm">
         <div class="flex justify-between items-center px-gutter py-4 w-full max-w-container-max mx-auto">
             <div class="flex items-center gap-8 flex-1">
-                <a class="font-headline-md text-headline-md font-bold text-primary" href="/Home/HomePage">Tiệm Sách Trí Tuệ</a>
+                <a class="font-headline-md text-headline-md font-bold text-primary" href="/Home/HomePage">@SiteOptions.Value.BrandName</a>
                 <form action="/Home/HomePage" method="get" class="hidden md:flex flex-1 max-w-md relative">
                     <input name="search" value="@ViewBag.SearchTerm" class="w-full pl-10 pr-4 py-2 bg-surface-container-low border border-outline-variant rounded-full text-body-md focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent transition-all" placeholder="Tìm kiếm theo tên sách, tác giả..." type="text" />
                     <button type="submit" class="absolute left-3 top-1/2 -translate-y-1/2 text-outline hover:text-primary transition-colors flex items-center border-none bg-transparent">
@@ -130,20 +130,18 @@
                     </button>
                 </form>
             </div>
-            <nav class="hidden lg:flex items-center gap-6 px-8">
-                <a class="text-primary font-bold border-b-2 border-primary pb-1 font-body-md transition-colors" href="/Home/HomePage">Trang chủ</a>
-                <a class="text-on-surface-variant hover:text-primary transition-colors font-body-md" href="/Home/HomePage#new-arrivals">Sách mới</a>
-                <a class="text-on-surface-variant hover:text-primary transition-colors font-body-md" href="/Home/HomePage#promotions">Khuyến mãi</a>
-                <a class="text-on-surface-variant hover:text-primary transition-colors font-body-md" href="/Home/HomePage#bestsellers">Bán chạy</a>
+            <nav id="home-section-nav" class="hidden lg:flex items-center gap-6 px-8 relative">
+                <a data-home-section="home" class="text-primary font-bold py-2 font-body-md transition-colors duration-300" href="/Home/HomePage" aria-current="page">Trang chủ</a>
+                <a data-home-section="new-arrivals" class="text-on-surface-variant hover:text-primary py-2 transition-colors duration-300 font-body-md" href="/Home/HomePage#new-arrivals">Sách mới</a>
+                <a data-home-section="promotions" class="text-on-surface-variant hover:text-primary py-2 transition-colors duration-300 font-body-md" href="/Home/HomePage#promotions">Khuyến mãi</a>
+                <a data-home-section="bestsellers" class="text-on-surface-variant hover:text-primary py-2 transition-colors duration-300 font-body-md" href="/Home/HomePage#bestsellers">Bán chạy</a>
+                <span id="home-nav-indicator" class="absolute left-0 bottom-0 h-0.5 bg-primary rounded-full transition-all duration-300 ease-out pointer-events-none" aria-hidden="true"></span>
             </nav>
             <div class="flex items-center gap-4">
-                <button class="p-2 text-on-surface-variant hover:text-primary transition-colors relative">
-                    <span class="material-symbols-outlined" data-icon="favorite">favorite</span>
-                </button>
-                <button class="p-2 text-on-surface-variant hover:text-primary transition-colors relative">
+                <a href="/Cart" aria-label="Giỏ hàng" class="p-2 text-on-surface-variant hover:text-primary transition-colors relative">
                     <span class="material-symbols-outlined" data-icon="shopping_cart">shopping_cart</span>
-                    <span class="absolute top-0 right-0 bg-error text-white text-[10px] w-4 h-4 flex items-center justify-center rounded-full">3</span>
-                </button>
+                    <span id="header-cart-count" class="absolute top-0 right-0 bg-error text-white text-[10px] min-w-4 h-4 px-1 flex items-center justify-center rounded-full">0</span>
+                </a>
 
                 @if (User.Identity?.IsAuthenticated == true)
                 {
@@ -168,13 +166,9 @@
                                 <span class="material-symbols-outlined text-[18px] text-on-surface-variant">person</span>
                                 Tài khoản của tôi
                             </a>
-                            <a href="/Account/Orders" class="flex items-center gap-2 px-4 py-3 text-on-surface hover:bg-surface-container transition-colors font-body-md text-body-md">
-                                <span class="material-symbols-outlined text-[18px] text-on-surface-variant">receipt_long</span>
-                                Đơn hàng của tôi
-                            </a>
                             <a href="/Account/OrderHistory" class="flex items-center gap-2 px-4 py-3 text-on-surface hover:bg-surface-container transition-colors font-body-md text-body-md">
                                 <span class="material-symbols-outlined text-[18px] text-on-surface-variant">receipt_long</span>
-                                Trạng thái đơn hàng của tôi
+                                Đơn hàng của tôi
                             </a>
                             <div class="border-t border-outline-variant"></div>
                             <form method="post" action="/Account/Logout">
@@ -199,6 +193,7 @@
                         <span class="hidden sm:inline">Đăng ký</span>
                     </a>
                 }
+                <div id="bookverse-language-switcher-slot" class="flex items-center"></div>
             </div>
         </div>
     </header>
@@ -533,7 +528,7 @@
         <div class="max-w-container-max mx-auto px-gutter py-stack-lg">
             <div class="grid grid-cols-1 md:grid-cols-4 gap-8 mb-12">
                 <div class="col-span-1 md:col-span-1">
-                    <h3 class="font-headline-sm text-headline-sm text-primary mb-6">Tiệm Sách Trí Tuệ</h3>
+                    <h3 class="font-headline-sm text-headline-sm text-primary mb-6">@SiteOptions.Value.BrandName</h3>
                     <p class="text-on-surface-variant mb-4">Lan tỏa tri thức, kết nối đam mê. Chúng tôi tự hào mang đến những đầu sách chọn lọc nhất cho độc giả Việt.</p>
                     <div class="flex gap-4">
                         <a class="w-10 h-10 rounded-full border border-outline flex items-center justify-center text-on-surface-variant hover:bg-primary hover:text-white transition-all" href="#">
@@ -567,21 +562,21 @@
                     <ul class="space-y-4 text-on-surface-variant">
                         <li class="flex items-start gap-3">
                             <span class="material-symbols-outlined text-primary">location_on</span>
-                            <span>Số 123, Đường Láng, Đống Đa, Hà Nội</span>
+                            <span>@SiteOptions.Value.Address</span>
                         </li>
                         <li class="flex items-center gap-3">
                             <span class="material-symbols-outlined text-primary">call</span>
-                            <span>1900 1234</span>
+                            <span>@SiteOptions.Value.Hotline</span>
                         </li>
                         <li class="flex items-center gap-3">
                             <span class="material-symbols-outlined text-primary">mail</span>
-                            <span>support@trituebooks.vn</span>
+                            <span>@SiteOptions.Value.SupportEmail</span>
                         </li>
                     </ul>
                 </div>
             </div>
             <div class="flex flex-col md:flex-row justify-between items-center pt-8 border-t border-outline-variant gap-4">
-                <p class="text-on-surface-variant text-body-md">© 2024 Tiệm Sách Trí Tuệ. All rights reserved.</p>
+                <p class="text-on-surface-variant text-body-md">© @DateTime.Now.Year @SiteOptions.Value.BrandName. All rights reserved.</p>
                 <div class="flex gap-4 grayscale opacity-60">
                     <img class="h-6" data-alt="Visa payment provider logo, clean minimalist SVG style." src="https://lh3.googleusercontent.com/aida-public/AB6AXuAS5J9aMt1rkE-XKYaI0W5lcEu7dCY4eb19eel9zxs-9e_SW6so0F7CWZaz9HhSciunpVqLptwOmzGPrLMFeXOECLeyul8sLA70jVTTA2W8LPphCVDTsTyYdzTY_fY96giSicZESohGxwXl4XRWy8ywiXgFBvDPWsuN4XzV2lXIsFd-xUqJ4dgZQzIvDgHGu5Bdog8XuFulrESYsU8BBUym56KwtaF13XKRmP2_yEzjvw-venn8p9oA" />
                     <img class="h-6" data-alt="Mastercard payment provider logo, clean minimalist SVG style." src="https://lh3.googleusercontent.com/aida-public/AB6AXuBzj7btBS8QCqGx-7MtGGF9oCW3NUzW3RpBbuj3Sgw36ZqU_SFrX0_ZyiY_BXWZj7Zje8E2RnGDFrMVr3I3J9JedwsSdNFK9bvl4CGQgV0gN11Ituir8UECstPSbDz89Tct1RpECMqB1gpYVql2o-_BNPt1thZrQf7iRCFMToWY1l2xWO7RHeN522hfvzr0MLVst7midvet6wvVcy2sLU9HE6baODt_jSfNHu3DItTWtO0AZ4sQOeb6" />
@@ -773,6 +768,71 @@
         function addToCart(bookId) {
             alert('Đã thêm sách vào giỏ hàng thành công!');
         }
+    </script>
+    <form id="global-antiforgery" class="d-none">@Html.AntiForgeryToken()</form>
+    <script>
+        async function addToCart(bookId) {
+            const token = document.querySelector('#global-antiforgery input[name="__RequestVerificationToken"]').value;
+            const body = new URLSearchParams({ bookId: bookId, quantity: 1, __RequestVerificationToken: token });
+            const response = await fetch('/Cart/Add', { method: 'POST', headers: { 'Accept': 'application/json', 'Content-Type': 'application/x-www-form-urlencoded' }, body });
+            if (response.redirected) { location.href = response.url; return; }
+            const result = await response.json();
+            if (result.success) {
+                const badge = document.getElementById('header-cart-count');
+                if (badge) badge.textContent = result.count;
+            }
+            alert(result.success ? 'Đã thêm sách vào giỏ hàng.' : 'Không thể thêm vào giỏ hàng.');
+        }
+    </script>
+    <script src="~/js/localization.js" asp-append-version="true"></script>
+    <script>fetch('/Cart/Count').then(r => r.json()).then(x => { const el = document.getElementById('header-cart-count'); if (el) el.textContent = x.count; }).catch(() => {});</script>
+    <script>
+        (() => {
+            const nav = document.getElementById('home-section-nav');
+            const indicator = document.getElementById('home-nav-indicator');
+            if (!nav || !indicator) return;
+            const links = [...nav.querySelectorAll('[data-home-section]')];
+
+            function activate(section) {
+                const active = links.find(link => link.dataset.homeSection === section) || links[0];
+                links.forEach(link => {
+                    const selected = link === active;
+                    link.classList.toggle('text-primary', selected);
+                    link.classList.toggle('font-bold', selected);
+                    link.classList.toggle('text-on-surface-variant', !selected);
+                    if (selected) link.setAttribute('aria-current', 'page');
+                    else link.removeAttribute('aria-current');
+                });
+                indicator.style.width = active.offsetWidth + 'px';
+                indicator.style.transform = `translateX(${active.offsetLeft}px)`;
+            }
+
+            links.forEach(link => link.addEventListener('click', event => {
+                event.preventDefault();
+                const section = link.dataset.homeSection;
+                activate(section);
+                if (section === 'home') {
+                    history.pushState(null, '', '/Home/HomePage');
+                    window.scrollTo({ top: 0, behavior: 'smooth' });
+                } else {
+                    history.pushState(null, '', '#' + section);
+                    document.getElementById(section)?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                }
+            }));
+
+            const observer = new IntersectionObserver(entries => {
+                const visible = entries.filter(entry => entry.isIntersecting).sort((a, b) => b.intersectionRatio - a.intersectionRatio)[0];
+                if (visible) activate(visible.target.id);
+            }, { rootMargin: '-20% 0px -60% 0px', threshold: [0, 0.1, 0.5] });
+            ['new-arrivals', 'promotions', 'bestsellers'].forEach(id => {
+                const section = document.getElementById(id);
+                if (section) observer.observe(section);
+            });
+
+            window.addEventListener('scroll', () => { if (window.scrollY < 160) activate('home'); }, { passive: true });
+            window.addEventListener('resize', () => activate(location.hash.slice(1) || (window.scrollY < 160 ? 'home' : links.find(x => x.getAttribute('aria-current'))?.dataset.homeSection)), { passive: true });
+            requestAnimationFrame(() => activate(location.hash.slice(1) || 'home'));
+        })();
     </script>
 </body>
 </html>

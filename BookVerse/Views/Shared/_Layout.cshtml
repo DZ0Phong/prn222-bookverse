@@ -1,64 +1,26 @@
 <!DOCTYPE html>
-<html lang="vi">
+<html lang="@(Context.Request.Cookies["bookverse.culture"] ?? "vi")">
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <meta name="description" content="@ViewData["Description"] ?? "BookVerse - Hệ thống mua sắm sách trực tuyến hàng đầu Việt Nam"" />
-    <title>@ViewData["Title"] - BookVerse</title>
-    <!-- Bootstrap CSS -->
+    <title>@ViewData["Title"] - @SiteOptions.Value.BrandName</title>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" />
-    <!-- Bootstrap Icons -->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" />
-    <!-- Site CSS (Design System) -->
     <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
     @await RenderSectionAsync("Styles", required: false)
 </head>
-<body>
-    @await Component.InvokeAsync("Header")
-    <main>
-        @RenderBody()
-    </main>
-    <footer class="site-footer">
-        <div class="container">
-            <div class="footer-grid">
-                <div class="footer-brand">
-                    <div class="footer-logo">
-                        <span class="footer-logo-icon"><i class="bi bi-book-half"></i></span>
-                        <span class="footer-logo-text">BookVerse</span>
-                    </div>
-                    <p>Hệ thống mua sắm sách trực tuyến, mang tri thức đến mọi nhà.</p>
-                </div>
-                <div>
-                    <h5>Danh Mục</h5>
-                    <ul>
-                        <li><a href="#">Văn học</a></li>
-                        <li><a href="#">Khoa học</a></li>
-                        <li><a href="#">Kinh tế</a></li>
-                        <li><a href="#">Thiếu nhi</a></li>
-                    </ul>
-                </div>
-                <div>
-                    <h5>Hỗ Trợ</h5>
-                    <ul>
-                        <li><a href="#">Chính sách đổi trả</a></li>
-                        <li><a href="#">Vận chuyển</a></li>
-                        <li><a href="#">Liên hệ</a></li>
-                    </ul>
-                </div>
-                <div>
-                    <h5>Liên Hệ</h5>
-                    <p><i class="bi bi-envelope"></i> contact&#64;bookverse.vn</p>
-                    <p><i class="bi bi-telephone"></i> 1800 xxxx</p>
-                </div>
-            </div>
-            <div class="footer-bottom">
-                <p>&copy; 2025 BookVerse. All rights reserved.</p>
-            </div>
-        </div>
-    </footer>
-
-    <!-- Bootstrap JS -->
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
-    @await RenderSectionAsync("Scripts", required: false)
-</body>
-</html>
+<body class="bg-light">
+<header class="bg-white border-bottom sticky-top"><nav class="navbar navbar-expand-lg container py-3">
+    <a class="navbar-brand fw-bold text-primary" href="/">@SiteOptions.Value.BrandName</a>
+    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#mainNav"><span class="navbar-toggler-icon"></span></button>
+    <div id="mainNav" class="collapse navbar-collapse"><ul class="navbar-nav me-auto"><li class="nav-item"><a class="nav-link" href="/">@T["Common.Home"]</a></li>@if(User.Identity?.IsAuthenticated==true){<li class="nav-item"><a class="nav-link" href="/Account/OrderHistory">@T["Order.History"]</a></li>}</ul>
+    <div class="d-flex align-items-center gap-2"><a class="btn btn-outline-primary position-relative" href="/Cart"><i class="bi bi-cart3"></i> @T["Common.Cart"] <span id="cart-count" class="badge bg-danger rounded-pill">0</span></a>
+    @if(User.Identity?.IsAuthenticated==true){<a class="btn btn-link" href="/Account/Profile">@User.Identity.Name</a><form action="/Account/Logout" method="post">@Html.AntiForgeryToken()<button class="btn btn-link">Đăng xuất</button></form>}else{<a class="btn btn-link" href="/Account/Login">Đăng nhập</a><a class="btn btn-primary" href="/Account/Register">Đăng ký</a>}
+    <form action="/Localization/SetLanguage" method="post" class="d-flex gap-1">@Html.AntiForgeryToken()<input type="hidden" name="returnUrl" value="@Context.Request.Path@Context.Request.QueryString" /><button class="btn btn-sm btn-outline-secondary" name="culture" value="vi">VI</button><button class="btn btn-sm btn-outline-secondary" name="culture" value="en">EN</button></form></div></div>
+</nav></header>
+<main class="container py-4">@RenderBody()</main>
+<footer class="bg-white border-top mt-5 py-4"><div class="container d-flex flex-wrap justify-content-between gap-3 small text-muted"><span>© @DateTime.Now.Year @SiteOptions.Value.BrandName</span><span>@SiteOptions.Value.SupportEmail · @SiteOptions.Value.Hotline · @SiteOptions.Value.Address</span></div></footer>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script><script src="~/js/localization.js" asp-append-version="true"></script>
+<script>fetch('/Cart/Count').then(r=>r.json()).then(x=>document.getElementById('cart-count').textContent=x.count).catch(()=>{});</script>
+@await RenderSectionAsync("Scripts", required: false)
+</body></html>

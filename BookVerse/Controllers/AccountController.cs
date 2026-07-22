@@ -7,16 +7,24 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using System.Security.Claims;
+using BookVerse.Commerce;
+using BookVerse.Configuration;
+using Microsoft.Extensions.Options;
+using BookVerse.Localization;
 
 namespace BookVerse.Controllers
 {
     public class AccountController : Controller
     {
         private readonly QuanLyBanSachContext _context;
+        private readonly SiteSettings _siteSettings;
+        private readonly IJsonLocalizer _localizer;
 
-        public AccountController(QuanLyBanSachContext context)
+        public AccountController(QuanLyBanSachContext context, IOptions<SiteSettings> siteSettings, IJsonLocalizer localizer)
         {
             _context = context;
+            _siteSettings = siteSettings.Value;
+            _localizer = localizer;
         }
 
         // ─────────────────────────────────────────
@@ -53,7 +61,7 @@ namespace BookVerse.Controllers
                 .FirstOrDefaultAsync(u => u.Email == vm.Email);
 
             // Không tiết lộ email có tồn tại hay không
-            const string genericError = "Email hoặc mật khẩu không đúng.";
+            var genericError = _localizer["Auth.InvalidCredentials"];
 
             if (user == null)
             {
@@ -64,7 +72,7 @@ namespace BookVerse.Controllers
             // Kiểm tra tài khoản bị khóa
             if (user.IsActive == false)
             {
-                vm.ErrorMessage = "Tài khoản của bạn đã bị khóa. Vui lòng liên hệ quản trị viên.";
+                vm.ErrorMessage = _localizer["Auth.AccountLocked"];
                 return View(vm);
             }
 
@@ -112,6 +120,8 @@ namespace BookVerse.Controllers
                 principal,
                 authProperties);
 
+            await MergeGuestCartAsync(user.UserId);
+
             // Redirect sau đăng nhập
             if (!string.IsNullOrEmpty(vm.ReturnUrl) && Url.IsLocalUrl(vm.ReturnUrl))
                 return Redirect(vm.ReturnUrl);
@@ -126,12 +136,12 @@ namespace BookVerse.Controllers
         // GET /Account/Register
         // ─────────────────────────────────────────
         [HttpGet]
-        public IActionResult Register(string? email = null)
+        public IActionResult Register(string? email = null, string? returnUrl = null)
         {
             if (User.Identity?.IsAuthenticated == true)
                 return Redirect("/");
 
-            return View(new RegisterViewModel { Email = email ?? string.Empty });
+            return View(new RegisterViewModel { Email = email ?? string.Empty, ReturnUrl = returnUrl });
         }
 
         // ─────────────────────────────────────────
@@ -147,12 +157,22 @@ namespace BookVerse.Controllers
             // Email trùng?
             if (await _context.Users.AnyAsync(u => u.Email == vm.Email))
             {
-                vm.ErrorMessage = "Email này đã được đăng ký. Vui lòng dùng email khác.";
+                vm.ErrorMessage = _localizer["Auth.DuplicateEmail"];
                 return View(vm);
             }
 
             // Hash password
             var hashedPassword = BCrypt.Net.BCrypt.HashPassword(vm.Password);
+
+            var userRoleId = await _context.Roles
+                .Where(r => r.RoleName == "User")
+                .Select(r => r.RoleId)
+                .FirstOrDefaultAsync();
+            if (userRoleId == 0)
+            {
+                ModelState.AddModelError(string.Empty, _localizer["Auth.UserRoleMissing"]);
+                return View(vm);
+            }
 
             var newUser = new User
             {
@@ -160,7 +180,7 @@ namespace BookVerse.Controllers
                 Email = vm.Email,
                 Phone = vm.Phone,
                 Password = hashedPassword,
-                RoleId = 2, // 2 = User
+                RoleId = userRoleId,
                 IsActive = true,
                 CreatedAt = DateTime.Now
             };
@@ -188,7 +208,10 @@ namespace BookVerse.Controllers
                 principal,
                 new AuthenticationProperties { IsPersistent = true, ExpiresUtc = DateTimeOffset.UtcNow.AddHours(8) });
 
-            return Redirect("/");
+            await MergeGuestCartAsync(newUser.UserId);
+
+            return !string.IsNullOrWhiteSpace(vm.ReturnUrl) && Url.IsLocalUrl(vm.ReturnUrl)
+                ? LocalRedirect(vm.ReturnUrl) : Redirect("/");
         }
 
         // ─────────────────────────────────────────
@@ -212,12 +235,72 @@ namespace BookVerse.Controllers
             return View();
         }
 
+        [HttpGet("/Account/Profile")]
+        [Authorize]
+        public async Task<IActionResult> Profile()
+        {
+            var user = await FindCurrentUserAsync();
+            if (user == null) return Challenge();
+            return View(new ProfileViewModel
+            {
+                FullName = user.FullName ?? string.Empty, Email = user.Email ?? string.Empty,
+                Phone = user.Phone, Address = user.Address, CreatedAt = user.CreatedAt
+            });
+        }
+
+        [HttpPost("/Account/Profile")]
+        [Authorize]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> Profile(ProfileViewModel vm)
+        {
+            var user = await FindCurrentUserAsync();
+            if (user == null) return Challenge();
+            vm.Email = user.Email ?? string.Empty;
+            vm.CreatedAt = user.CreatedAt;
+            if (!ModelState.IsValid) return View(vm);
+
+            user.FullName = vm.FullName.Trim();
+            user.Phone = string.IsNullOrWhiteSpace(vm.Phone) ? null : vm.Phone.Trim();
+            user.Address = string.IsNullOrWhiteSpace(vm.Address) ? null : vm.Address.Trim();
+            await _context.SaveChangesAsync();
+            await RefreshSignInAsync(user);
+            TempData["ProfileSuccess"] = "Thông tin tài khoản đã được cập nhật.";
+            return RedirectToAction(nameof(Profile));
+        }
+
+        [HttpGet("/Account/ChangePassword")]
+        [Authorize]
+        public IActionResult ChangePassword() => View(new ChangePasswordViewModel());
+
+        [HttpPost("/Account/ChangePassword")]
+        [Authorize]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> ChangePassword(ChangePasswordViewModel vm)
+        {
+            if (!ModelState.IsValid) return View(vm);
+            var user = await FindCurrentUserAsync();
+            if (user == null) return Challenge();
+            if (!PasswordMatches(vm.CurrentPassword, user.Password))
+            {
+                ModelState.AddModelError(nameof(vm.CurrentPassword), "Mật khẩu hiện tại không đúng.");
+                return View(vm);
+            }
+            user.Password = BCrypt.Net.BCrypt.HashPassword(vm.NewPassword);
+            await _context.SaveChangesAsync();
+            TempData["ProfileSuccess"] = "Mật khẩu đã được thay đổi thành công.";
+            return RedirectToAction(nameof(Profile));
+        }
+
+        [HttpGet("/Account/Orders")]
+        [Authorize]
+        public IActionResult Orders() => RedirectToAction(nameof(OrderHistory));
+
 
 
         // ─────────────────────────────────────────
         // GET /Account/OrderHistory
         // ─────────────────────────────────────────
-        [HttpGet]
+        [HttpGet("/Account/OrderHistory")]
         [Authorize]
         public async Task<IActionResult> OrderHistory()
         {
@@ -245,6 +328,87 @@ namespace BookVerse.Controllers
                 .ToListAsync();
 
             return View(orders);
+        }
+
+        [HttpGet("/Account/OrderDetail/{id:int}")]
+        [Authorize]
+        public async Task<IActionResult> OrderDetail(int id)
+        {
+            var userIdClaim = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            if (!int.TryParse(userIdClaim, out var userId)) return Challenge();
+
+            var order = await _context.Orders
+                .Where(o => o.OrderId == id && o.UserId == userId)
+                .Select(o => new UserOrderDetailViewModel
+                {
+                    OrderId = o.OrderId,
+                    CreatedAt = o.CreatedAt,
+                    Status = o.Status,
+                    PaymentMethod = o.PaymentMethod,
+                    PaymentStatus = o.PaymentStatus,
+                    ShippingAddress = o.ShippingAddress,
+                    PhoneNumber = o.PhoneNumber,
+                    TotalAmount = o.TotalAmount ?? 0,
+                    Items = o.OrderDetails.Select(d => new UserOrderItemViewModel
+                    {
+                        BookId = d.BookId ?? 0,
+                        BookTitle = d.Book != null ? d.Book.Title : string.Empty,
+                        BookImage = d.Book != null ? d.Book.Image : null,
+                        Quantity = d.Quantity ?? 0,
+                        Price = d.Price ?? 0
+                    }).ToList()
+                })
+                .FirstOrDefaultAsync();
+
+            return order == null ? NotFound() : View(order);
+        }
+
+        private async Task<User?> FindCurrentUserAsync()
+        {
+            var value = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            return int.TryParse(value, out var userId) ? await _context.Users.Include(x => x.Role).FirstOrDefaultAsync(x => x.UserId == userId) : null;
+        }
+
+        private static bool PasswordMatches(string input, string? stored)
+        {
+            if (string.IsNullOrEmpty(stored)) return false;
+            try { return BCrypt.Net.BCrypt.Verify(input, stored); }
+            catch { return input == stored; }
+        }
+
+        private async Task RefreshSignInAsync(User user)
+        {
+            var roleName = user.Role?.RoleName ?? "User";
+            var claims = new List<Claim>
+            {
+                new(ClaimTypes.NameIdentifier, user.UserId.ToString()),
+                new(ClaimTypes.Name, user.FullName ?? user.Email ?? "User"),
+                new(ClaimTypes.Email, user.Email ?? string.Empty), new(ClaimTypes.Role, roleName),
+                new("UserId", user.UserId.ToString()), new("FullName", user.FullName ?? string.Empty)
+            };
+            await HttpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme,
+                new ClaimsPrincipal(new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme)),
+                new AuthenticationProperties { IsPersistent = true, ExpiresUtc = DateTimeOffset.UtcNow.AddHours(8) });
+        }
+
+        private async Task MergeGuestCartAsync(int userId)
+        {
+            var guestCart = GuestCartStore.Read(HttpContext.Session);
+            if (guestCart.Count == 0) return;
+            var bookIds = guestCart.Keys.ToList();
+            var stocks = await _context.Books.Where(x => bookIds.Contains(x.BookId) && x.IsActive != false)
+                .ToDictionaryAsync(x => x.BookId, x => x.Quantity ?? 0);
+            var existing = await _context.Carts.Where(x => x.UserId == userId && x.BookId.HasValue && bookIds.Contains(x.BookId.Value)).ToListAsync();
+            foreach (var pair in guestCart)
+            {
+                if (!stocks.TryGetValue(pair.Key, out var stock) || stock <= 0) continue;
+                var row = existing.FirstOrDefault(x => x.BookId == pair.Key);
+                var quantity = Math.Min((row?.Quantity ?? 0) + pair.Value, Math.Min(stock, _siteSettings.MaxQuantityPerCartItem));
+                if (row == null) _context.Carts.Add(new Cart { UserId = userId, BookId = pair.Key, Quantity = quantity });
+                else row.Quantity = quantity;
+            }
+            await _context.SaveChangesAsync();
+            GuestCartStore.Clear(HttpContext.Session);
         }
     }
 }

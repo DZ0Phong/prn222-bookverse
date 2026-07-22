@@ -1,0 +1,15 @@
+{
+  "SiteSettings": {
+    "BrandName": "Tiệm Sách Trí Tuệ",
+    "SupportEmail": "support@trituebooks.vn",
+    "Hotline": "1900 1234",
+    "Address": "Số 123, Đường Láng, Đống Đa, Hà Nội",
+    "CurrencyCode": "VND",
+    "ShippingFee": 30000,
+    "FreeShippingThreshold": 500000,
+    "MaxQuantityPerCartItem": 20,
+    "PaymentTimeoutMinutes": 15,
+    "EnableCod": true,
+    "EnableVnPay": true
+  }
+}

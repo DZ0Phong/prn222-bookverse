@@ -3,7 +3,7 @@
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>@ViewData["Title"] - BookVerse Admin</title>
+    <title>@ViewData["Title"] - @SiteOptions.Value.BrandName Admin</title>
     <!-- Bootstrap CSS -->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" />
     <!-- Bootstrap Icons -->
@@ -26,7 +26,7 @@
                 <i class="bi bi-book-half"></i>
             </div>
             <div class="sidebar-brand-text">
-                <span class="sidebar-brand-name">BookVerse</span>
+                <span class="sidebar-brand-name">@SiteOptions.Value.BrandName</span>
                 <span class="sidebar-brand-subtitle">Admin Panel</span>
             </div>
         </a>
@@ -90,6 +90,12 @@
                     <span class="nav-link-text">Thống kê & báo cáo</span>
                 </a>
             </div>
+            <div class="nav-item">
+                <a href="/Admin/Settings" class="nav-link-admin @(ViewData["ActiveMenu"]?.ToString() == "Settings" ? "active" : "")">
+                    <i class="bi bi-gear nav-link-icon"></i>
+                    <span class="nav-link-text">Cài đặt hệ thống</span>
+                </a>
+            </div>
         </nav>
 
         <!-- Sidebar Footer: Logout -->
@@ -117,7 +123,7 @@
 
             <div class="topbar-breadcrumb">
                 <div class="topbar-page-title">@ViewData["Title"]</div>
-                <div class="topbar-page-sub">BookVerse &rsaquo; @ViewData["Title"]</div>
+                <div class="topbar-page-sub">@SiteOptions.Value.BrandName &rsaquo; @ViewData["Title"]</div>
             </div>
 
             <div class="topbar-actions">
@@ -156,6 +162,7 @@
 
 <!-- Bootstrap JS -->
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+<script src="~/js/localization.js" asp-append-version="true"></script>
 
 <!-- Sidebar toggle script -->
 <script>

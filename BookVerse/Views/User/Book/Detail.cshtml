@@ -11,7 +11,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>@ViewData["Title"] - Tiệm Sách Trí Tuệ</title>
+    <title>@ViewData["Title"] - @SiteOptions.Value.BrandName</title>
     <!-- Bootstrap 5 & Bootstrap Icons -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
@@ -210,7 +210,7 @@
     <!-- Main Header -->
     <header class="main-header py-3">
         <div class="container d-flex align-items-center justify-content-between">
-            <a href="/" class="brand-title">Tiệm Sách Trí Tuệ</a>
+            <a href="/" class="brand-title">@SiteOptions.Value.BrandName</a>
 
             <div class="search-wrapper">
                 <i class="bi bi-search"></i>
@@ -225,23 +225,30 @@
             </div>
 
             <div class="d-flex align-items-center gap-3">
-                <a href="#" class="text-secondary fs-5 position-relative">
-                    <i class="bi bi-heart"></i>
-                </a>
-                <a href="#" class="text-secondary fs-5 position-relative me-2">
+                <a href="/Cart" class="text-secondary fs-5 position-relative me-2" aria-label="Giỏ hàng">
                     <i class="bi bi-cart3"></i>
-                    <span class="position-absolute top-0 start-100 translate-middle badge rounded-circle bg-danger" style="font-size: 0.6rem;">3</span>
+                    <span id="detail-cart-count" class="position-absolute top-0 start-100 translate-middle badge rounded-circle bg-danger" style="font-size: 0.6rem;">0</span>
                 </a>
+                @if (User.Identity?.IsAuthenticated == true)
+                {
                 <div class="dropdown">
                     <a class="text-decoration-none text-dark fw-medium dropdown-toggle small" href="#" data-bs-toggle="dropdown">
-                        <i class="bi bi-person me-1"></i> Tài khoản
+                        <i class="bi bi-person me-1"></i> @User.Identity.Name
                     </a>
                     <ul class="dropdown-menu dropdown-menu-end fs-7">
+                        <li><a class="dropdown-item px-3 py-1 text-dark" href="/Account/Profile">Tài khoản của tôi</a></li>
                         <li><a class="dropdown-item px-3 py-1 text-dark" href="/Account/OrderHistory">Đơn hàng của tôi</a></li>
                         <li><hr class="dropdown-divider"></li>
-                        <li><a class="dropdown-item px-3 py-1 text-danger" href="#">Đăng xuất</a></li>
+                        <li><form method="post" action="/Account/Logout">@Html.AntiForgeryToken()<button class="dropdown-item px-3 py-1 text-danger" type="submit">Đăng xuất</button></form></li>
                     </ul>
                 </div>
+                }
+                else
+                {
+                    <a href="/Account/Login" class="btn btn-outline-primary btn-sm">Đăng nhập</a>
+                    <a href="/Account/Register" class="btn btn-primary btn-sm">Đăng ký</a>
+                }
+                <div id="bookverse-language-switcher-slot" class="d-flex align-items-center"></div>
             </div>
         </div>
     </header>
@@ -249,12 +256,12 @@
     <!-- Sub Navbar -->
     <div class="sub-navbar">
         <div class="container">
-            <a href="#">Văn học</a>
-            <a href="#">Kinh tế</a>
-            <a href="#">Kỹ năng sống</a>
-            <a href="#">Công nghệ thông tin</a>
-            <a href="#">Thiếu nhi</a>
-            <a href="#" class="text-secondary"><i class="bi bi-grid-3x3-gap me-1"></i> Tất cả sách</a>
+            <a href="/Home/HomePage?categoryId=1">Văn học</a>
+            <a href="/Home/HomePage?categoryId=2">Kinh tế</a>
+            <a href="/Home/HomePage?categoryId=3">Kỹ năng sống</a>
+            <a href="/Home/HomePage?categoryId=4">Công nghệ thông tin</a>
+            <a href="/Home/HomePage?categoryId=5">Thiếu nhi</a>
+            <a href="/Home/HomePage" class="text-secondary"><i class="bi bi-grid-3x3-gap me-1"></i> Tất cả sách</a>
         </div>
     </div>
 
@@ -418,7 +425,7 @@
         <div class="container">
             <div class="row g-4">
                 <div class="col-md-4">
-                    <div class="footer-title">Tiệm Sách Trí Tuệ</div>
+                    <div class="footer-title">@SiteOptions.Value.BrandName</div>
                     <p class="text-secondary lh-lg" style="font-size: 0.85rem;">
                         Lan tỏa tri thức, kết nối đam mê. Chúng tôi tự hào mang đến những đầu sách chọn lọc nhất cho độc giả Việt.
                     </p>
@@ -449,15 +456,15 @@
                     <div class="fw-bold text-dark mb-3">Liên hệ</div>
                     <div class="contact-item">
                         <i class="bi bi-geo-alt"></i>
-                        <span>Số 123, Đường Láng, Đống Đa, Hà Nội</span>
+                        <span>@SiteOptions.Value.Address</span>
                     </div>
                     <div class="contact-item">
                         <i class="bi bi-telephone"></i>
-                        <span>1900 1234</span>
+                        <span>@SiteOptions.Value.Hotline</span>
                     </div>
                     <div class="contact-item">
                         <i class="bi bi-envelope"></i>
-                        <span>support@trituebooks.vn</span>
+                        <span>@SiteOptions.Value.SupportEmail</span>
                     </div>
                 </div>
             </div>
@@ -466,9 +473,21 @@
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
     <script>
-        function addToCart(bookId) {
-            alert('Đã thêm sách vào giỏ hàng!');
+        async function addToCart(bookId) {
+            const token = document.querySelector('#global-antiforgery input[name="__RequestVerificationToken"]').value;
+            const body = new URLSearchParams({ bookId: bookId, quantity: 1, __RequestVerificationToken: token });
+            const response = await fetch('/Cart/Add', { method: 'POST', headers: { 'Accept': 'application/json', 'Content-Type': 'application/x-www-form-urlencoded' }, body });
+            if (response.redirected) { location.href = response.url; return; }
+            const result = await response.json();
+            if (result.success) {
+                const badge = document.getElementById('detail-cart-count');
+                if (badge) badge.textContent = result.count;
+            }
+            alert(result.success ? 'Đã thêm sách vào giỏ hàng.' : 'Không thể thêm vào giỏ hàng.');
         }
     </script>
+    <form id="global-antiforgery" class="d-none">@Html.AntiForgeryToken()</form>
+    <script src="~/js/localization.js" asp-append-version="true"></script>
+    <script>fetch('/Cart/Count').then(r => r.json()).then(x => { const el = document.getElementById('detail-cart-count'); if (el) el.textContent = x.count; }).catch(() => {});</script>
 </body>
 </html>

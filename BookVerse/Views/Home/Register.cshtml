@@ -7,7 +7,7 @@
 <head>
     <meta charset="utf-8" />
     <meta content="width=device-width, initial-scale=1.0" name="viewport" />
-    <title>Đăng ký - Tiệm Sách Trí Tuệ</title>
+    <title>Đăng ký - @SiteOptions.Value.BrandName</title>
     <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@100..900&family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet" />
     <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet" />
@@ -140,7 +140,7 @@
                 <div class="inline-flex items-center justify-center w-16 h-16 rounded-2xl bg-primary mb-4 shadow-lg shadow-primary/20">
                     <span class="material-symbols-outlined text-white text-[32px]">menu_book</span>
                 </div>
-                <h2 class="font-headline-lg text-headline-lg text-primary">Tiệm Sách Trí Tuệ</h2>
+                <h2 class="font-headline-lg text-headline-lg text-primary">@SiteOptions.Value.BrandName</h2>
                 <p class="font-body-md text-body-md text-on-surface-variant mt-2">Nuôi dưỡng tri thức thông qua từng trang sách.</p>
             </div>
             <!-- Registration Card -->
@@ -233,7 +233,7 @@
     </main>
     <!-- Footer -->
     <footer class="w-full py-8 px-gutter flex flex-col md:flex-row justify-between items-center gap-4 text-on-surface-variant font-body-md text-body-md">
-        <p>© 2024 Tiệm Sách Trí Tuệ. All rights reserved.</p>
+        <p>© @DateTime.Now.Year @SiteOptions.Value.BrandName. All rights reserved.</p>
         <div class="flex gap-6">
             <a class="hover:text-primary transition-colors" href="#">Về chúng tôi</a>
             <a class="hover:text-primary transition-colors" href="#">Hỗ trợ</a>
@@ -284,5 +284,6 @@
              });
         });
     </script>
+    <script src="~/js/localization.js" asp-append-version="true"></script>
 </body>
 </html>
